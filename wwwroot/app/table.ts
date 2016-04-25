@@ -347,7 +347,7 @@ class Table {
 
     DocClick = (e:any) => {
 
-        if (this.choiceFormIsOpen||e.toElement.classList.contains("ChoiceFormButton")){
+        if (this.choiceFormIsOpen||e.target.classList.contains("ChoiceFormButton")){
             return;
         }
 
@@ -356,7 +356,7 @@ class Table {
             return;
         }
 
-        if (this.inEditing && (!(e.toElement.classList.contains("tableinput")))) {
+        if (this.inEditing && (!(e.target.classList.contains("tableinput")))) {
             if (this.WasChanged()) {
                 e.preventDefault();
                 var inputs = this.obj.find("input[type!='button']");
@@ -378,20 +378,20 @@ class Table {
     }
 
     // Устанавливаем фокус на таблицу если щелкнули мышкой внутри таблицы
-    Click = (e: MouseEvent) => {
+    Click = (e: any) => {
 
-        if (e.toElement.classList.contains("ChoiceFormButton")) {
+        if (e.target.classList.contains("ChoiceFormButton")) {
             return;
         }
-        if ((e.toElement.id == this.name || $(e.toElement).parents().length) && ($(e.target).prop("tagName").toLowerCase() != "input")) {
+        if ((e.target.id == this.name || $(e.target).parents().length) && ($(e.target).prop("tagName").toLowerCase() != "input")) {
             $(this.idSelector + '_input').focus();
             }
     };
 
     // подсвечивание строки
-    ClickOnRow = (e: MouseEvent) => {
+    ClickOnRow = (e: any) => {
 
-        if (e.toElement.classList.contains("ChoiceFormButton")) {
+        if (e.target.classList.contains("ChoiceFormButton")) {
             return;
         }
 
@@ -407,7 +407,7 @@ class Table {
 
         if (this.isEditable) {
             // Попытка захватить фокус если редактируется строка (нужны еще доработки)
-            if ((this.inEditing) && (e.toElement.className.indexOf("tableinput") == -1)) {
+            if ((this.inEditing) && (e.target.className.indexOf("tableinput") == -1)) {
                 e.preventDefault();
                 //$(":focus").focus();
                 this.obj.find(".tableinput").first().focus();

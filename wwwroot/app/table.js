@@ -249,14 +249,14 @@ var Table = (function () {
             }
         };
         this.DocClick = function (e) {
-            if (_this.choiceFormIsOpen || e.toElement.classList.contains("ChoiceFormButton")) {
+            if (_this.choiceFormIsOpen || e.target.classList.contains("ChoiceFormButton")) {
                 return;
             }
             if (_this.dontEndEditing) {
                 _this.dontEndEditing = false;
                 return;
             }
-            if (_this.inEditing && (!(e.toElement.classList.contains("tableinput")))) {
+            if (_this.inEditing && (!(e.target.classList.contains("tableinput")))) {
                 if (_this.WasChanged()) {
                     e.preventDefault();
                     var inputs = _this.obj.find("input[type!='button']");
@@ -278,16 +278,16 @@ var Table = (function () {
         };
         // Устанавливаем фокус на таблицу если щелкнули мышкой внутри таблицы
         this.Click = function (e) {
-            if (e.toElement.classList.contains("ChoiceFormButton")) {
+            if (e.target.classList.contains("ChoiceFormButton")) {
                 return;
             }
-            if ((e.toElement.id == _this.name || $(e.toElement).parents().length) && ($(e.target).prop("tagName").toLowerCase() != "input")) {
+            if ((e.target.id == _this.name || $(e.target).parents().length) && ($(e.target).prop("tagName").toLowerCase() != "input")) {
                 $(_this.idSelector + '_input').focus();
             }
         };
         // подсвечивание строки
         this.ClickOnRow = function (e) {
-            if (e.toElement.classList.contains("ChoiceFormButton")) {
+            if (e.target.classList.contains("ChoiceFormButton")) {
                 return;
             }
             var target = $(e.target);
@@ -300,7 +300,7 @@ var Table = (function () {
             targetRow.addClass('highlight').siblings().removeClass('highlight');
             if (_this.isEditable) {
                 // Попытка захватить фокус если редактируется строка (нужны еще доработки)
-                if ((_this.inEditing) && (e.toElement.className.indexOf("tableinput") == -1)) {
+                if ((_this.inEditing) && (e.target.className.indexOf("tableinput") == -1)) {
                     e.preventDefault();
                     //$(":focus").focus();
                     _this.obj.find(".tableinput").first().focus();
