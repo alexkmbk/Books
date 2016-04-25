@@ -5,16 +5,138 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Books</title>
 
-    <environment names="Development">
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-        <link rel="stylesheet" href="~/css/site.css" />
-    </environment>
-    <environment names="Staging,Production">
-        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/css/bootstrap.min.css"
-              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
-              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
-        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
-    </environment>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+
+    <!--link href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/ui-darkness/jquery-ui.min.css" rel="stylesheet"-->
+    <link rel="stylesheet" href="~/jquery-ui-1.11.4.custom/jquery-ui.css" type="text/css" />
+    <!--<link rel="stylesheet" href="css/jquery-ui.theme.min.css" type="text/css" />
+
+    <!--Подключаем сначала jQuery затем уже jQuery UI! -->
+    <script src="~/js/jquery-2.2.0.min.js"></script>
+    <script src="~/js/jquery-ui.min.js"></script>
+    <script src="~/lib/system.js"></script>
+
+    <script src="~/app/table.js"></script>
+    <script src="~/app/keyboard_code_enums.js"></script>
+
+    <style>
+        h4 {
+            color: darkgreen;
+        }
+
+        table {
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+            table .EmptyTable > td {
+                border: none;
+            }
+
+        .EmptyTable {
+            height: 50px;
+        }
+
+
+        .fields {
+            border-spacing: 7px 2px;
+        }
+
+            .fields > tbody > tr > td {
+                padding: 2px;
+            }
+
+        div.disabled {
+            pointer-events: none;
+            /* for "disabled" effect */
+            opacity: 0.5;
+        }
+
+
+        h1 {
+            color: #369;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 250%;
+        }
+
+        h2, h3 {
+            color: #444;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: lighter;
+        }
+
+        body {
+            margin: 2em;
+        }
+
+        body, input[text], button {
+            color: #888;
+            font-family: Cambria, Georgia;
+        }
+
+        .tableinput {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        td {
+            height: 30;
+            max-height: 30px;
+        }
+
+            td > div {
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+            }
+
+        .table-container {
+            height: 10em;
+        }
+
+        table.scroll {
+            display: flex;
+            flex-flow: column;
+            height: 100%;
+            width: 100%;
+        }
+
+            table.scroll thead {
+                /* head takes the height it requires,
+    and it's not scaled when table is resized */
+                flex: 0 0 auto;
+                width: calc(100% - 0.9em);
+            }
+
+                table.scroll thead:last-child {
+                    border-right-style: none;
+                }
+
+            table.scroll tbody {
+                */
+                /* body takes all the remaining available space */
+                flex: 1 1 auto;
+                display: block;
+                overflow-y: scroll;
+            }
+
+                table.scroll tbody tr {
+                    width: 100%;
+                }
+
+                table.scroll thead,
+                table.scroll tbody tr {
+                    display: table;
+                    table-layout: fixed;
+                }
+
+
+        @*Стиль для подсвечивания строки таблицы*@ .table-striped tbody tr.highlight td {
+            background-color: bisque;
+        }
+    </style>
+
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -26,13 +148,11 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a asp-controller="Home" asp-action="Index" class="navbar-brand">Books</a>
+                <a asp-controller="Books" asp-action="Index" class="navbar-brand">Books</a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    <li><a asp-controller="Publishers" asp-action="Index">Publishers</a></li>
                 </ul>
             </div>
         </div>

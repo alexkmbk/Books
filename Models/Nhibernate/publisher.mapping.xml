@@ -4,8 +4,8 @@ assembly="Books" namespace="Books.Models">
   
   <class name="Publisher" table="Publishers" dynamic-update="true" >
     <cache usage="read-write"/>
-    <id name="Id" column="Id" type="int">
-      <generator class="native" />
+    <id name="Id" column="Id" type="int" >
+      <generator class="sequence"/>
     </id>
     <property name="Name" />
   </class>
