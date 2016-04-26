@@ -1,7 +1,7 @@
-﻿/// <reference path="./customers.dialog.ts" />
+﻿/// <reference path="./books.dialog.ts" />
 
 
-import * as CustomersDialog from "./customers.dialog";
+import * as CustomersDialog from "./books.dialog";
 
 var customers_table: Table;
 

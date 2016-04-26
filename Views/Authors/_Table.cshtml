@@ -1,0 +1,40 @@
+﻿@model IEnumerable<Books.Models.Author>
+
+<a id="authors_table_input" href="#authors_table"></a>
+
+@if (Model.Count() == 0)
+{
+    <table id="authors_table" class="table table-striped table-bordered table-condensed EmptyTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+                <tr>
+
+                    <td style="display:none;"></td>
+                    <td></td>
+                </tr>
+        </tbody>
+    </table>
+}
+else {
+    <table id="authors_table" class="table table-striped table-bordered table-condensed">
+        <thead>
+            <tr>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var e in Model)
+                {
+                <tr>
+
+                    <td style="display:none;">@e.Id</td>
+                    <td>@e.Name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

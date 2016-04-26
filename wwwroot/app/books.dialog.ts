@@ -1,7 +1,7 @@
 ﻿///<reference path="../lib/jquery/jqueryui.d.ts" />
 ///<reference path="../lib/jquery/jquery.d.ts" />
 
-import * as BanksChoiceDialog from "./banks_choice_dialog";
+import * as BanksChoiceDialog from "./authors_choice_dialog";
 
 var autoComplete, input: JQuery;
 var dlg: JQuery = $("#dialog_customer");

@@ -1,5 +1,5 @@
-/// <reference path="./customers.dialog.ts" />
-System.register(["./customers.dialog"], function(exports_1) {
+/// <reference path="./books.dialog.ts" />
+System.register(["./books.dialog"], function(exports_1) {
     var CustomersDialog;
     var customers_table;
     function InitCustomersTable() {

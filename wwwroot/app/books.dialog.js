@@ -1,6 +1,6 @@
 ///<reference path="../lib/jquery/jqueryui.d.ts" />
 ///<reference path="../lib/jquery/jquery.d.ts" />
-System.register(["./banks_choice_dialog"], function(exports_1) {
+System.register(["./authors_choice_dialog"], function(exports_1) {
     var BanksChoiceDialog;
     var autoComplete, input, dlg, saving, isNew, customerId, accountdialog_table, parentForm;
     function SetDialogActive(dlg, data) {
