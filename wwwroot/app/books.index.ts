@@ -1,6 +1,5 @@
 ﻿/// <reference path="./books.dialog.ts" />
 
-
 import * as BookDialog from "./books.dialog";
 
 var books_table: Table;

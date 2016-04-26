@@ -107,6 +107,27 @@ namespace Books.Controllers
             }
         }
 
+        [HttpGet]
+        public ActionResult GetAutocompletePublishersList(string term)
+        {
+            try
+            {
+
+                using (ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment))
+                {
+                    var publishers = session.Query<Publisher>().Where(x => x.Name.ToLower().Contains(term.ToLower()))
+                        .OrderBy(x => x.Name)
+                        .Select(x => new { label = x.Name, value = x.Name, Id = x.Id }).ToList();
+
+                    return Json(publishers);
+                }
+            }
+            catch (Exception exc)
+            {
+                return Json(new { isOk = false, Errors = exc.Message });
+            }
+        }
+
     }
 }
 

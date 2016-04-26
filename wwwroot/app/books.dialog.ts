@@ -134,6 +134,9 @@ export function OpenEditDialog(_isNew: boolean, _Id = null, Name = null, Descrip
         dlg.dialog('destroy');
     }
 
+    var publisherRefInput = new RefInput("PublisherName", "PublisherId", dlg.find("#PublisherRefInput"), "Publishers/GetAutocompletePublishersList", true);
+
+
     if (!_isNew) {
         dlg.find("input[name='Name']").val(Name);
         dlg.find("input[name='Id']").val(_Id);
