@@ -1,40 +1,44 @@
 /// <reference path="./books.dialog.ts" />
 System.register(["./books.dialog"], function(exports_1) {
-    var CustomersDialog;
-    var customers_table;
-    function InitCustomersTable() {
-        var cols = [new Column({ name: "CustomerId", isVisible: false }),
-            new Column({ name: "CustomerName", isVisible: true }),
-            new Column({ name: "BusinessTypeName", isVisible: true })];
-        customers_table = new Table("customers_table", false, cols, $(window));
-        var panel = $("#customers_panel");
-        panel.find("input[name='AddButton']").get(0).onclick = customers_table.Add;
-        panel.find("input[name='EditButton']").get(0).onclick = customers_table.Edit;
-        panel.find("input[name='DeleteButton']").get(0).onclick = customers_table.BeforeDelete;
-        panel = $("#dialog_customer_panel");
-        panel.find("input[name='SaveAndCloseButton']").get(0).onclick = CustomersDialog.SaveAndClose;
-        panel.find("input[name='SaveButton']").get(0).onclick = CustomersDialog.Save;
+    var BookDialog;
+    var books_table;
+    function InitBooksTable() {
+        var cols = [new Column({ name: "Id", isVisible: false }),
+            new Column({ name: "Name", isVisible: true }),
+            new Column({ name: "Description", isVisible: true }),
+            new Column({ name: "IdPublisher", isVisible: true }),
+            new Column({ name: "Price", isVisible: true }),
+            new Column({ name: "PublishedAt", isVisible: true }),
+        ];
+        books_table = new Table("books_table", false, cols, $(window));
+        var panel = $("#books_panel");
+        panel.find("input[name='AddButton']").get(0).onclick = books_table.Add;
+        panel.find("input[name='EditButton']").get(0).onclick = books_table.Edit;
+        panel.find("input[name='DeleteButton']").get(0).onclick = books_table.BeforeDelete;
+        panel = $("#dialog_book_panel");
+        panel.find("input[name='SaveAndCloseButton']").get(0).onclick = BookDialog.SaveAndClose;
+        panel.find("input[name='SaveButton']").get(0).onclick = BookDialog.Save;
     }
     return {
         setters:[
-            function (CustomersDialog_1) {
-                CustomersDialog = CustomersDialog_1;
+            function (BookDialog_1) {
+                BookDialog = BookDialog_1;
             }],
         execute: function() {
-            InitCustomersTable();
-            window.addEventListener("customers_table_Pick", function (e) {
+            InitBooksTable();
+            window.addEventListener("books_table_Pick", function (e) {
                 var rowdata = e.detail;
-                CustomersDialog.OpenEditDialog(false, rowdata['CustomerId'], rowdata['CustomerName'], rowdata['BusinessTypeName'], window);
+                BookDialog.OpenEditDialog(false, rowdata['Id'], rowdata['Name'], rowdata['Description'], rowdata['PublisherId'], rowdata['Price'], rowdata['PublishedAt'], window);
             });
-            window.addEventListener("customers_table_New", function (e) {
-                CustomersDialog.OpenEditDialog(true, null, null, null, window);
+            window.addEventListener("books_table_New", function (e) {
+                BookDialog.OpenEditDialog(true, null, null, null, null, null, null, window);
             });
             //Удалить запись
-            window.addEventListener("customers_table_BeforeDelete", function (e) {
-                window.location.href = "/Customers/Delete?CustomerId=" + e.detail['CustomerId'];
+            window.addEventListener("books_table_BeforeDelete", function (e) {
+                window.location.href = "/Books/Delete?Id=" + e.detail['Id'];
             });
-            window.addEventListener("customers_table_AfterSave", function (e) {
-                InitCustomersTable();
+            window.addEventListener("books_table_AfterSave", function (e) {
+                InitBooksTable();
             });
         }
     }

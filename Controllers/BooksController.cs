@@ -7,6 +7,10 @@ using Books.Models;
 using NHibernate.Linq;
 using NHibernate;
 using Microsoft.Extensions.PlatformAbstractions;
+using System.IO;
+using Microsoft.AspNet.Mvc.ViewEngines;
+using Microsoft.AspNet.Mvc.Rendering;
+using Microsoft.AspNet.Mvc.ViewFeatures;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -21,6 +25,29 @@ namespace Books.Controllers
             _appEnvironment = appEnvironment;
         }
 
+        // Функция для формирования html кода по переданному шаблону вида и модели
+        // результат возвращается в виде строки
+        // это позволяет передавать готовый html код в ответ на ajax запросы с клиента
+        public string RenderPartialViewToString(string viewName, object model)
+        {
+            if (string.IsNullOrEmpty(viewName))
+                viewName = ActionContext.ActionDescriptor.Name;
+
+            ViewData.Model = model;
+
+            using (StringWriter sw = new StringWriter())
+            {
+                var engine = Resolver.GetService(typeof(ICompositeViewEngine)) as ICompositeViewEngine;
+                ViewEngineResult viewResult = engine.FindPartialView(ActionContext, viewName);
+
+                ViewContext viewContext = new ViewContext(ActionContext, viewResult.View, ViewData, TempData, sw, new HtmlHelperOptions());
+
+                var t = viewResult.View.RenderAsync(viewContext);
+                t.Wait();
+
+                return sw.GetStringBuilder().ToString();
+            }
+        }
 
         // GET: /<controller>/
         public IActionResult Index()
@@ -47,11 +74,14 @@ namespace Books.Controllers
                         book.Description = description;
                         book.Price = price;
                         book.PublishedAt = publishedAt;
-                        var publisher = session.Get<Publisher>(idPublisher);
-                        if (publisher == null) return Json(new { isOk = false, Errors = "The publisher was not found by given Id."});
-                        
-                        book.publisher = publisher;
-                        
+                        if (idPublisher != 0)
+                        {
+                            var publisher = session.Get<Publisher>(idPublisher);
+                            if (publisher == null) return Json(new { isOk = false, Errors = "The publisher was not found by given Id." });
+
+                            book.publisher = publisher;
+                        }
+
 
                         session.Save(book);
                         transaction.Commit();
@@ -65,5 +95,53 @@ namespace Books.Controllers
                 return Json(new { isOk = false, Errors = exc.Message});
             }
         }
+
+        public IActionResult GetBookAuthorsForEdit(int bookId)
+        {
+            using (ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment))
+            {
+                var books = session.Query<Book>().ToList();
+
+                ViewBag.Title = "Authors";
+                ViewBag.BookId = bookId;
+                var authors = (from row in session.Query<BooksToAuthors>()
+                               where (row.IdBook == bookId)
+                               join author in session.Query<Author>() on row.IdAuthor equals author.Id
+                               select new Author
+                                   {
+                                       Id = row.IdAuthor,
+                                       Name = author.Name,
+                                   });
+
+                return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("_AuthorsTable", authors) });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult AddAuthorToBook(int AuthorId, int BookId)
+        {
+            try
+            {
+                using (ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment))
+                {
+                    using (ITransaction transaction = session.BeginTransaction())
+                    {
+                        BooksToAuthors bookToAuthors = new BooksToAuthors();
+                        bookToAuthors.IdAuthor = AuthorId;
+                        bookToAuthors.IdBook = BookId;
+                        session.Save(bookToAuthors);
+                        transaction.Commit();
+                    }
+                }
+
+                return Json(new { isOk = true, Errors = "" });
+            }
+            catch (Exception exc)
+            {
+                return Json(new { isOk = false, Errors = exc.Message });
+            }
+        }
+        
+
     }
 }

@@ -1,22 +1,22 @@
 ﻿///<reference path="../lib/jquery/jqueryui.d.ts" />
 ///<reference path="../lib/jquery/jquery.d.ts" />
 
-import * as BanksChoiceDialog from "./authors_choice_dialog";
+import * as AuthorsChoiceDialog from "./authors_choice_dialog";
 
 var autoComplete, input: JQuery;
-var dlg: JQuery = $("#dialog_customer");
+var dlg: JQuery = $("#dialog_book");
 var saving: boolean = false;
 var isNew: boolean = false;
-var customerId: number;
-var accountdialog_table: Table;
+var bookId: number;
+var authors_table: Table;
 var parentForm: any;
 
 function SetDialogActive(dlg: JQuery, data) {
 
-    $('#bankaccounts_table_div :input').removeAttr('disabled');
-    $('#bankaccounts_table_div').removeClass('disabled');
+    $('#authors_table_div :input').removeAttr('disabled');
+    $('#authors_table_div').removeClass('disabled');
     isNew = false;
-    dlg.dialog('option', 'title', "Контрагент " + $("#form_customer input[name='CustomerName']").val());
+    dlg.dialog('option', 'title', "Book " + $("#form_book input[name='Name']").val());
 
 }
 
@@ -28,55 +28,52 @@ function InitDialog() {
 
             // если нажата клавиша ESC и выполняется редактирование ячейки,
             // то необходимо завершить редактирование не сохраняя введенные данные
-
             if (e.keyCode == 27) {
-                if (accountdialog_table.inEditing) {
+                if (authors_table.inEditing) {
                     e.preventDefault();
-                    accountdialog_table.EndEditing();
-                    $("#bankaccounts_table_input").focus();
+                    authors_table.EndEditing();
+                    $("#authors_table_input").focus();
                 }
             }
         }
     });
 
-    var cols: Column[] = [new Column({ name: "BankAccountNumber", isVisible: true }),
-        new Column({ name: "BankName", isVisible: true, isAutoComplete: true, AutoCompleteSource: "Customers/GetAutocompleteBankList", AutoCompleteID: "BankId", isChoiceForm: true }),
-        new Column({ name: "BankId", isVisible: false }),
-        new Column({ name: "BankAccountId", isVisible: false })];
-    accountdialog_table = new Table("bankaccounts_table", true, cols, dlg, cols[3], 200);
+    var cols: Column[] = [new Column({ name: "Id", isVisible: false }),
+        new Column({ name: "Name", isVisible: true, isAutoComplete: true, AutoCompleteSource: "Authors/GetAutocompleteAuthorsList", AutoCompleteID: "Id", isChoiceForm: true })];
+    authors_table = new Table("authors_table", true, cols, dlg, cols[0], 200);
 
-    var panel = $("#bankaccounts_panel");
-    panel.find("input[name='NewButton']").get(0).onclick = accountdialog_table.Add;
-    panel.find("input[name='EditButton']").get(0).onclick = accountdialog_table.Edit;
-    panel.find("input[name='DeleteButton']").get(0).onclick = accountdialog_table.BeforeDelete;
+    var panel = $("#authors_panel");
+    panel.find("input[name='NewButton']").get(0).onclick = authors_table.Add;
+    panel.find("input[name='EditButton']").get(0).onclick = authors_table.Edit;
+    panel.find("input[name='DeleteButton']").get(0).onclick = authors_table.BeforeDelete;
 
-    $("#form_customer").get(0).onsubmit = SaveAndClose;
+    $("#form_book").get(0).onsubmit = SaveAndClose;
 
     //Удалить запись
-    dlg.get(0).addEventListener("bankaccounts_table_BeforeDelete", function (e: any) {
+    dlg.get(0).addEventListener("authors_table_BeforeDelete", function (e: any) {
 
         var rowdata: Array<any> = e.detail;
         $.ajax({
             type: 'POST',
-            url: 'Customers/DeleteBankAccount',
-            data: { BankAccountId: rowdata['BankAccountId'] },
+            url: 'Books/DeleteAuthorFromBook',
+            data: { BookId: rowdata['BookId'], AuthorId: rowdata['AuthorId']},
             success: function (data) {
                 if (data["isOk"]) {
-                    accountdialog_table.Delete(); // удалить строку в диалоге
+                    authors_table.Delete(); // удалить строку в диалоге
                 }
                 else {
-                    var myDiv = document.getElementById("dialog_customer_divmsg");
+                    var myDiv = document.getElementById("dialog_book_divmsg");
                     myDiv.innerHTML = "Ошибка записи: " + data["Errors"];
                 }
             },
             error: function (xhr, str) {
-                var myDiv = document.getElementById("dialog_customer_divmsg");
+                var myDiv = document.getElementById("dialog_book_divmsg");
                 myDiv.innerHTML = "Ошибка записи: " + xhr.responseText;
             }
         });
     });
 
-    dlg.get(0).addEventListener("bankaccounts_table_SaveTable", function (e: any) {
+    dlg.get(0).addEventListener("authors_table_SaveTable", function (e: any) {
 
         var action;
         var rowdata;
@@ -85,44 +82,38 @@ function InitDialog() {
 
         saving = true;
 
-        if (e.detail["BankAccountId"] == "") {
-            action = 'Customers/AddBankAccount';
-            rowdata = { BankAccountNumber: e.detail["BankAccountNumber"], BankId: e.detail["BankId"], CustomerId: customerId }
-        }
-        else {
-            action = 'Customers/UpdateBankAccount';
-            rowdata = { BankAccountNumber: e.detail["BankAccountNumber"], BankId: e.detail["BankId"], CustomerId: customerId, BankAccountId: e.detail["BankAccountId"] }
-        }
+        action = 'Books/AddAuthorToBook';
+        rowdata = { AuthorId: e.detail["AuthorId"], BookId: bookId }
         $.ajax({
             type: 'POST',
             url: action,
             data: rowdata,
             success: function (data) {
                 if (data["isOk"]) {
-                    accountdialog_table.EndEditing(data["BankAccountId"]);
+                    authors_table.EndEditing(data["AuthorId"]);
                     saving = false;
                 }
                 else {
-                    var myDiv = document.getElementById("dialog_customer_divmsg");
+                    var myDiv = document.getElementById("dialog_book_divmsg");
                     myDiv.innerHTML = "Ошибка записи: " + data["Errors"];
                     saving = false;
                 }
             },
             error: function (xhr, str) {
-                var myDiv = document.getElementById("dialog_customer_divmsg");
+                var myDiv = document.getElementById("dialog_book_divmsg");
                 myDiv.innerHTML = "Ошибка записи: " + xhr.responseText;
                 saving = false;
             }
         });
     });
 
-    accountdialog_table.elem.addEventListener("bankaccounts_table_ChoiceFormClick_BankName", function (e: any) {
-        BanksChoiceDialog.OpenBanksChoiceDialog($("#dialog_Banks"), function (rowData: any) {
-            accountdialog_table.SetInputValue("BankId", rowData["BankId"]);
-            accountdialog_table.SetInputValue("BankName", rowData["BankName"]);
+    authors_table.elem.addEventListener("authors_table_ChoiceFormClick_Name", function (e: any) {
+        AuthorsChoiceDialog.OpenBanksChoiceDialog($("#dialog_authors"), function (rowData: any) {
+            authors_table.SetInputValue("Id", rowData["Id"]);
+            authors_table.SetInputValue("Name", rowData["Name"]);
         },
             function () {
-                accountdialog_table.choiceFormIsOpen = false;
+                authors_table.choiceFormIsOpen = false;
         });
         return false;
     });
@@ -132,11 +123,11 @@ function InitDialog() {
 }
 
 // Открывает диалог редактирования свойств
-export function OpenEditDialog(_isNew: boolean, _CustomerId = null, CustomerName = null, BusinessTypeName = null, _parentForm: Window) {
+export function OpenEditDialog(_isNew: boolean, _Id = null, Name = null, Description = null, PublisherId = null, Price = null, PublishedAt = null, _parentForm: Window) {
 
     parentForm = _parentForm;
 
-    document.getElementById("dialog_customer_divmsg").innerHTML = "";
+    document.getElementById("dialog_book_divmsg").innerHTML = "";
 
     // Удалим ранее созданный диалог, чтобы очистить все свойства
     if (dlg.hasClass('ui-dialog-content')) {
@@ -144,33 +135,44 @@ export function OpenEditDialog(_isNew: boolean, _CustomerId = null, CustomerName
     }
 
     if (!_isNew) {
-        dlg.find("input[name='CustomerName']").val(CustomerName);
-        dlg.find("input[name='CustomerId']").val(_CustomerId);
-        dlg.find("select[name='BusinessTypeName']").val(BusinessTypeName);
-        dlg.attr('title', 'Контрагент ' + CustomerName);
-        customerId = _CustomerId;
+        dlg.find("input[name='Name']").val(Name);
+        dlg.find("input[name='Id']").val(_Id);
+        dlg.find("input[name='Description']").val(Description);
+        dlg.find("input[name='Price']").val(Price);
+        dlg.find("input[name='PublisherId']").val(PublisherId);
+        dlg.find("input[name='PublishedAt']").val(PublishedAt);
+        dlg.attr('title', 'Book ' + Name);
+        bookId = _Id;
+
+        var PublisherName;
+        $.ajax({
+            async: false,
+            type: 'GET',
+            url: 'Authors/GetName',
+            data: { 'Id': PublisherId },
+            success: function (data) { PublisherName = data["name"]}
+        });
+        dlg.find("input[name='PublisherName']").val(PublisherName);
     }
     else
-        dlg.attr('title', 'Создание нового контрагента');
+        dlg.attr('title', 'Add new book');
         
-    // устанавливаем признак что запись уже существует, просто редактируем
-    //dlg.attr('isNew', +_isNew);
     isNew = _isNew;
+    
     // установим атрибут со значением ID чтобы обновить потом запись в БД
-
     $.ajax({
         type: 'GET',
-        url: 'Customers/GetBankAccountsForEdit',
-        data: { 'CustomerId': customerId },
+        url: 'Books/GetBookAuthorsForEdit',
+        data: { 'bookId': bookId },
         success: function (data) {
-            // Если запрос выполнен без ошибок то присваиваем полученный с сервера html код, элементу BankAccountsTable
+            // Если запрос выполнен без ошибок то присваиваем полученный с сервера html код, элементу authorsTable
             if (data["isOk"]) {
-                $('#bankaccounts_table_div').html(data["view"]);
+                $('#authors_table_div').html(data["view"]);
                 InitDialog();
                 if (isNew) {
-                    // Установим все поля ввода банковских счетов неактивными, поскольку контрагент еще не записан в базу
-                    $('#bankaccounts_table_div :input').attr('disabled', "true");
-                    $('#bankaccounts_table_div').addClass('disabled');
+                    // Установим все поля ввода авторов неактивными, поскольку книга еще не записана в базу
+                    $('#authors_table_div :input').attr('disabled', "true");
+                    $('#authors_table_div').addClass('disabled');
                 }
                 else SetDialogActive(dlg, data);
 
@@ -178,13 +180,13 @@ export function OpenEditDialog(_isNew: boolean, _CustomerId = null, CustomerName
             else {
                 // Если запрос обработан, но произошла ошибка, то устанавливаем текст ошибки в элементе dialog_customer_divmsg
                 //расположенном здесь, же на форме диалога, чтобы пользователь мог видеть сообщение
-                var myDiv = document.getElementById("dialog_customer_divmsg");
+                var myDiv = document.getElementById("dialog_book_divmsg");
                 myDiv.innerHTML = "Ошибка полученния списка банковских счетов: " + data["Errors"];
             }
         },
         // если запрос не удалось обработать
         error: function (xhr, str) {
-            var myDiv = document.getElementById("dialog_customer_divmsg");
+            var myDiv = document.getElementById("dialog_book_divmsg");
             myDiv.innerHTML = "Ошибка полученния списка банковских счетов: " + xhr.responseText;
         }
     });
@@ -206,11 +208,11 @@ export function SaveAndClose() {
 function SaveChanges(close: boolean = false) {
     // validation form on client side
     var errors = "";
-    if ($("#form_customer input[name='CustomerName']").val().length == 0) {
-        errors = "Не задано имя контрагента";
+    if ($("#form_book input[name='Name']").val().length == 0) {
+        errors = "The name of the book is empty";
     }
 
-    var myDiv = document.getElementById("dialog_customer_divmsg");
+    var myDiv = document.getElementById("dialog_book_divmsg");
 
     if (errors.length != 0) {
         myDiv.innerHTML = errors;
@@ -223,10 +225,10 @@ function SaveChanges(close: boolean = false) {
     // в зависимости от этого будет вызываться различный метод контроллера: Add или Update
     var action: string;
     
-    if (isNew) action = 'Customers/Add';
-    else action = 'Customers/Update?CustomerId=' + customerId;
+    if (isNew) action = 'Books/Create';
+    else action = 'Books/Update?BookId=' + bookId;
 
-    var msg = $('#form_customer').serialize();
+    var msg = $('#form_book').serialize();
     $.ajax({
         type: 'POST',
         url: action,
@@ -236,36 +238,36 @@ function SaveChanges(close: boolean = false) {
             if (data["isOk"]) {
                 if (close) {
                     dlg.dialog('close');                
-                    $('#customers_table_div').html(data["view"]);
-                    $('#customers_table_input').focus();
+                    $('#books_table_div').html(data["view"]);
+                    $('#books_table_input').focus();
                     dlg.dialog('destroy');
                 }
                 else {
-                    $('#customers_table_div').html(data["view"]);
+                    $('#books_table_div').html(data["view"]);
                     if (isNew) {
                         // Установим все поля ввода банковских счетов активными, поскольку контрагент уже записан в базу
-                        customerId = data["CustomerId"];
+                        bookId = data["BookId"];
                         SetDialogActive(dlg, data);
                     }
                 }
-                var event = new CustomEvent("customers_table_AfterSave");
+                var event = new CustomEvent("books_table_AfterSave");
                 parentForm.dispatchEvent(event);
             }
             else {
                 //Если запрос обработан, но произошла ошибка, то устанавливаем текст ошибки в элементе dialog_customer_divmsg
                 //расположенном здесь, же на форме диалога, чтобы пользователь мог видеть сообщение
-                var myDiv = document.getElementById("dialog_customer_divmsg");
+                var myDiv = document.getElementById("dialog_book_divmsg");
                 myDiv.innerHTML = "Ошибка записи: " + data["Errors"];
             }
         },
         statusCode: {
             401: function (response) {
-                document.location.hostname = "/Account/Login?returnUrl=/Customers/Index";
+                document.location.hostname = "/Account/Login?returnUrl=/Books/Index";
             }
         },
         // если запрос не удалось обработать
         error: function (xhr: any, str) {
-            var myDiv = document.getElementById("dialog_customer_divmsg");
+            var myDiv = document.getElementById("dialog_book_divmsg");
             myDiv.innerHTML = "Ошибка записи: " + xhr.responseCode;
         }
     });
@@ -274,27 +276,10 @@ function SaveChanges(close: boolean = false) {
   
 
 function msg(str) {
-    var myDiv = document.getElementById("dialog_customer_divmsg");
+    var myDiv = document.getElementById("dialog_book_divmsg");
     myDiv.innerHTML = str;
 }
 
-
-// Обработка ввода с клавиатуры
-// нажатие ENTER в поле CustomerName - переход на следующее поле
-dlg.find("input[name='CustomerName']").keypress(function (e) {
-    if (e.keyCode == $.ui.keyCode.ENTER) {
-        e.preventDefault();
-        $("#dialog_customer select[name='BusinessTypeName']").focus();
-    }
-});
-
-// нажатие ENTER в поле BusinessTypeName - переход на кнопку submit
-dlg.find("select[name='BusinessTypeName']").keypress(function (e) {
-    if (e.keyCode == $.ui.keyCode.ENTER) {
-        e.preventDefault();
-        $("#dialog_customer input[type='submit']").focus();
-    }
-});
 
 // Если  нажато сочетание ctrl+Enter тогда сохраняем данные и закрываем диалог
 dlg.keypress(function (e) {
