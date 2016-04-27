@@ -7,10 +7,11 @@ var books_table: Table;
 function InitBooksTable() {
 
     var cols: Column[] = [new Column({ name: "Id", isVisible: false }),
+        new Column({ name: "PublisherId", isVisible: false }),
         new Column({ name: "Name", isVisible: true }),
         new Column({ name: "Description", isVisible: true }),
-        new Column({ name: "IdPublisher", isVisible: true }),
         new Column({ name: "Price", isVisible: true }),
+        new Column({ name: "NamePublisher", isVisible: true }),
         new Column({ name: "PublishedAt", isVisible: true }),
     ];
 

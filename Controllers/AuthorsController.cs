@@ -109,24 +109,6 @@ namespace Books.Controllers
 
 
         [HttpGet]
-        public ActionResult GetName(int Id)
-        {
-            try
-            {
-                using (ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment))
-                {
-                    return Json(new { name = session.Get<Author>(Id) }); 
-                }
-
-                return Json(new { isOk = true, Errors = "" });
-            }
-            catch (Exception exc)
-            {
-                return Json(new { isOk = false, Errors = exc.Message });
-            }
-        }
-
-        [HttpGet]
         public ActionResult GetAutocompleteAuthorsList(string term)
         {
             try

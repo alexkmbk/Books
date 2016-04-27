@@ -134,7 +134,14 @@ export function OpenEditDialog(_isNew: boolean, _Id = null, Name = null, Descrip
         dlg.dialog('destroy');
     }
 
-    SetRefInput("PublisherName", "PublisherId", dlg.find("div[name='fields']").eq(0), "Publishers/GetAutocompletePublishersList", true);
+    var fields = dlg.find("div[name='fields']").eq(0);
+    SetRefInput("PublisherName", "PublisherId", fields, "Publishers/GetAutocompletePublishersList", true);
+
+    // Установим Datepicker
+    fields.find("input[name='PublishedAt']").datepicker({
+        dateFormat: "yy-mm-dd",
+        
+    });
 
     if (!_isNew) {
         dlg.find("input[name='Name']").val(Name);
@@ -145,12 +152,11 @@ export function OpenEditDialog(_isNew: boolean, _Id = null, Name = null, Descrip
         dlg.find("input[name='PublishedAt']").val(PublishedAt);
         dlg.attr('title', 'Book ' + Name);
         bookId = _Id;
-
         var PublisherName;
         $.ajax({
             async: false,
             type: 'GET',
-            url: 'Authors/GetName',
+            url: 'Publishers/GetName',
             data: { 'Id': PublisherId },
             success: function (data) { PublisherName = data["name"]}
         });

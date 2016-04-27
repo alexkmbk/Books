@@ -28,7 +28,6 @@ function SetRefInput(valueInputName, idInputName, container, autoCompleteSource,
                     ui.item ?
                         idInput.val(ui.item.Id) :
                         idInput.val("");
-                    alert(idInput.val());
                 },
                 open: function () {
                     var z = window.document.defaultView.getComputedStyle(container.get(0)).getPropertyValue('z-index');

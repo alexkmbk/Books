@@ -52,11 +52,10 @@ namespace Books.Controllers
         // GET: /<controller>/
         public IActionResult Index()
         {
-            using (ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment))
-            {
-                var books = session.Query<Book>().ToList();
-                return View(books);
-            }
+            ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment);
+
+            var books = session.Query<Book>().ToList();
+            return View(books);
 
         }
 
@@ -93,6 +92,43 @@ namespace Books.Controllers
             catch (Exception exc)
             {
                 return Json(new { isOk = false, Errors = exc.Message});
+            }
+        }
+
+        [HttpPost]
+        public ActionResult Update(int BookId, string name, string description, int PublisherId, float price, DateTime PublishedAt)
+        {
+            try
+            {
+                using (ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment))
+                {
+                    using (ITransaction transaction = session.BeginTransaction())
+                    {
+                        Book book = session.Get<Book>(BookId);
+                        if (book==null) return Json(new { isOk = false, Errors = "The book was not found by given Id." });
+                        book.Name = name;
+                        book.Description = description;
+                        book.Price = price;
+                        book.PublishedAt = PublishedAt;
+                        if (PublisherId != 0)
+                        {
+                            var publisher = session.Get<Publisher>(PublisherId);
+                            if (publisher == null) return Json(new { isOk = false, Errors = "The publisher was not found by given Id." });
+
+                            book.publisher = publisher;
+                        }
+
+
+                        session.Update(book);
+                        transaction.Commit();
+                    }
+                }
+
+                return Json(new { isOk = true, Errors = "" });
+            }
+            catch (Exception exc)
+            {
+                return Json(new { isOk = false, Errors = exc.Message });
             }
         }
 

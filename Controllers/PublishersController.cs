@@ -128,6 +128,25 @@ namespace Books.Controllers
             }
         }
 
+        [HttpGet]
+        public ActionResult GetName(int Id)
+        {
+            try
+            {
+                using (ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment))
+                {
+                    var publisher = session.Get<Publisher>(Id);
+                    if (publisher == null) return Json(new { isOk = false, Errors = "The author was not found by given Id." });
+                    return Json(new { name = publisher.Name });
+                }
+
+            }
+            catch (Exception exc)
+            {
+                return Json(new { isOk = false, Errors = exc.Message });
+            }
+        }
+
     }
 }
 

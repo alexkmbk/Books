@@ -4,10 +4,11 @@ System.register(["./books.dialog"], function(exports_1) {
     var books_table;
     function InitBooksTable() {
         var cols = [new Column({ name: "Id", isVisible: false }),
+            new Column({ name: "PublisherId", isVisible: false }),
             new Column({ name: "Name", isVisible: true }),
             new Column({ name: "Description", isVisible: true }),
-            new Column({ name: "IdPublisher", isVisible: true }),
             new Column({ name: "Price", isVisible: true }),
+            new Column({ name: "NamePublisher", isVisible: true }),
             new Column({ name: "PublishedAt", isVisible: true }),
         ];
         books_table = new Table("books_table", false, cols, $(window));

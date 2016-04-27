@@ -108,7 +108,12 @@ System.register(["./authors_choice_dialog"], function(exports_1) {
         if (dlg.hasClass('ui-dialog-content')) {
             dlg.dialog('destroy');
         }
-        SetRefInput("PublisherName", "PublisherId", dlg.find("div[name='fields']").eq(0), "Publishers/GetAutocompletePublishersList", true);
+        var fields = dlg.find("div[name='fields']").eq(0);
+        SetRefInput("PublisherName", "PublisherId", fields, "Publishers/GetAutocompletePublishersList", true);
+        // Установим Datepicker
+        fields.find("input[name='PublishedAt']").datepicker({
+            dateFormat: "yy-mm-dd",
+        });
         if (!_isNew) {
             dlg.find("input[name='Name']").val(Name);
             dlg.find("input[name='Id']").val(_Id);
@@ -122,11 +127,12 @@ System.register(["./authors_choice_dialog"], function(exports_1) {
             $.ajax({
                 async: false,
                 type: 'GET',
-                url: 'Authors/GetName',
+                url: 'Publishers/GetName',
                 data: { 'Id': PublisherId },
                 success: function (data) { PublisherName = data["name"]; }
             });
             dlg.find("input[name='PublisherName']").val(PublisherName);
+            alert(PublisherName);
         }
         else
             dlg.attr('title', 'Add new book');
