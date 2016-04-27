@@ -2,9 +2,10 @@
 ///<reference path="../lib/jquery/jquery.d.ts" />
 
 import * as AuthorsChoiceDialog from "./authors_choice_dialog";
+import * as PublishersChoiceDialog from "./publishers_choice_dialog";
 
 var autoComplete, input: JQuery;
-var dlg: JQuery = $("#dialog_book");
+var dlg: JQuery;
 var saving: boolean = false;
 var isNew: boolean = false;
 var bookId: number;
@@ -16,8 +17,6 @@ function SetDialogActive(dlg: JQuery, data) {
     $('#authors_table_div :input').removeAttr('disabled');
     $('#authors_table_div').removeClass('disabled');
     isNew = false;
-    dlg.dialog('option', 'title', "Book " + $("#form_book input[name='Name']").val());
-
 }
 
 function InitDialog() {
@@ -127,79 +126,117 @@ export function OpenEditDialog(_isNew: boolean, _Id = null, Name = null, Descrip
 
     parentForm = _parentForm;
 
-    document.getElementById("dialog_book_divmsg").innerHTML = "";
-
     // Удалим ранее созданный диалог, чтобы очистить все свойства
-    if (dlg.hasClass('ui-dialog-content')) {
-        dlg.dialog('destroy');
-        dlg.find("input[type='text']").val("");
-    }
+   // if (dlg.hasClass('ui-dialog-content')) {
+     //   dlg.dialog('destroy');
+        //dlg.find("input[type='text']").val("");
+    //}
 
-    var fields = dlg.find("div[name='fields']").eq(0);
-    SetRefInput("PublisherName", "PublisherId", fields, "Publishers/GetAutocompletePublishersList", true);
-
-    // Установим Datepicker
-    fields.find("input[name='PublishedAt']").datepicker({
-        dateFormat: "yy-mm-dd",
-        
-    });
-    
-    if (!_isNew) {
-        
-        dlg.find("input[name='Name']").val(Name);
-        dlg.find("input[name='Id']").val(_Id);
-        dlg.find("input[name='Description']").val(Description);
-        dlg.find("input[name='Price']").val(Price);
-        dlg.find("input[name='PublisherId']").val(PublisherId);
-        dlg.find("input[name='PublishedAt']").val(PublishedAt);
-        dlg.attr('title', 'Book ' + Name);
-        bookId = _Id;
-        var PublisherName;
-        $.ajax({
-            async: false,
-            type: 'GET',
-            url: 'Publishers/GetName',
-            data: { 'Id': PublisherId },
-            success: function (data) { PublisherName = data["name"]}
-        });
-        dlg.find("input[name='PublisherName']").val(PublisherName);
-    }
-    else
-        dlg.attr('title', 'Add new book');
-        
-    isNew = _isNew;
-    
-    // установим атрибут со значением ID чтобы обновить потом запись в БД
     $.ajax({
         type: 'GET',
-        url: 'Books/GetBookAuthorsForEdit',
-        data: { 'bookId': bookId },
+        url: 'Books/GetDialog',
+        data: { 'Id': _Id, 'isNew': _isNew },
         success: function (data) {
             // Если запрос выполнен без ошибок то присваиваем полученный с сервера html код, элементу authorsTable
             if (data["isOk"]) {
-                $('#authors_table_div').html(data["view"]);
-                InitDialog();
-                if (isNew) {
-                    // Установим все поля ввода авторов неактивными, поскольку книга еще не записана в базу
-                    $('#authors_table_div :input').attr('disabled', "true");
-                    $('#authors_table_div').addClass('disabled');
-                }
-                else SetDialogActive(dlg, data);
+                $('#dialog_book_div').html(data["view"]);
+                dlg = $("#dialog_book");
 
+                // Если  нажато сочетание ctrl+Enter тогда сохраняем данные и закрываем диалог
+                dlg.keypress(function (e) {
+                    if (e.ctrlKey && e.keyCode == 10) {
+                        e.preventDefault();
+                        SaveChanges();
+                    }
+                });
+
+                var panel = $("#dialog_book_panel");
+                panel.find("input[name='SaveAndCloseButton']").get(0).onclick = SaveAndClose;
+                panel.find("input[name='SaveButton']").get(0).onclick = Save;
+
+                // Ссылочное поле с выбором издателя из таблицы Publishers
+                // Здесь реализуется возможность выбора с помощью автокомплита и формы выбора
+                var fields = dlg.find("div[name='fields']").eq(0);
+                SetRefInput("PublisherName", "PublisherId", fields, "Publishers/GetAutocompletePublishersList", true);
+
+                fields.get(0).addEventListener("PublisherName_ChoiceFormClick", function (e: any) {
+                    PublishersChoiceDialog.OpenPublishersChoiceDialog($("#dialog_publishers"), function (rowData: any) {
+                        fields.find("input[name = 'PublisherName']").val(rowData["Name"]);
+                        fields.find("input[name = 'PublisherId']").val(rowData["Id"]);
+                    },
+                        function () {
+                            //accountdialog_table.choiceFormIsOpen = false;
+                        });
+                    return false;
+                });    
+
+                // Установим Datepicker
+                fields.find("input[name='PublishedAt']").datepicker({
+                    dateFormat: "yy-mm-dd",
+                });
+
+                bookId = _Id;
+
+               /* if (!_isNew) {
+
+                    dlg.find("input[name='Name']").val(Name);
+                    dlg.find("input[name='Id']").val(_Id);
+                    dlg.find("input[name='Description']").val(Description);
+                    dlg.find("input[name='Price']").val(Price);
+                    dlg.find("input[name='PublisherId']").val(PublisherId);
+                    dlg.find("input[name='PublishedAt']").val(PublishedAt);
+                    dlg.attr('title', 'Book ' + Name);
+                    bookId = _Id;
+                    var PublisherName;
+                    $.ajax({
+                        async: false,
+                        type: 'GET',
+                        url: 'Publishers/GetName',
+                        data: { 'Id': PublisherId },
+                        success: function (data) { PublisherName = data["name"] }
+                    });
+                    dlg.find("input[name='PublisherName']").val(PublisherName);
+                }
+                else
+                    dlg.attr('title', 'Add new book');*/
+
+                isNew = _isNew;
+    
+                // заполним таблицу авторов, здесь повторный вызов сервера, надо бы перенести все это на сервер
+                $.ajax({
+                    type: 'GET',
+                    url: 'Books/GetBookAuthorsForEdit',
+                    data: { 'bookId': bookId },
+                    success: function (data) {
+                        // Если запрос выполнен без ошибок то присваиваем полученный с сервера html код, элементу authorsTable
+                        if (data["isOk"]) {
+                            $('#authors_table_div').html(data["view"]);
+                            InitDialog();
+                            if (isNew) {
+                                // Установим все поля ввода авторов неактивными, поскольку книга еще не записана в базу
+                                $('#authors_table_div :input').attr('disabled', "true");
+                                $('#authors_table_div').addClass('disabled');
+                            }
+                            else SetDialogActive(dlg, data);
+
+                        }
+                        else {
+                            // Если запрос обработан, но произошла ошибка, то устанавливаем текст ошибки в элементе dialog_customer_divmsg
+                            //расположенном здесь, же на форме диалога, чтобы пользователь мог видеть сообщение
+                            var myDiv = document.getElementById("dialog_book_divmsg");
+                            myDiv.innerHTML = "Ошибка полученния списка банковских счетов: " + data["Errors"];
+                        }
+                    },
+                    // если запрос не удалось обработать
+                    error: function (xhr, str) {
+                        var myDiv = document.getElementById("dialog_book_divmsg");
+                        myDiv.innerHTML = "Ошибка полученния списка банковских счетов: " + xhr.responseText;
+                    }
+                });
             }
-            else {
-                // Если запрос обработан, но произошла ошибка, то устанавливаем текст ошибки в элементе dialog_customer_divmsg
-                //расположенном здесь, же на форме диалога, чтобы пользователь мог видеть сообщение
-                var myDiv = document.getElementById("dialog_book_divmsg");
-                myDiv.innerHTML = "Ошибка полученния списка банковских счетов: " + data["Errors"];
-            }
-        },
-        // если запрос не удалось обработать
-        error: function (xhr, str) {
-            var myDiv = document.getElementById("dialog_book_divmsg");
-            myDiv.innerHTML = "Ошибка полученния списка банковских счетов: " + xhr.responseText;
         }
     });
+
 
 }
 
@@ -216,25 +253,15 @@ export function SaveAndClose() {
 
 // Save changes
 function SaveChanges(close: boolean = false) {
-    // validation form on client side
-    var errors = "";
-    if ($("#form_book input[name='Name']").val().length == 0) {
-        errors = "The name of the book is empty";
-    }
-
+  
     var myDiv = document.getElementById("dialog_book_divmsg");
-
-    if (errors.length != 0) {
-        myDiv.innerHTML = errors;
-        return;
-    }
-    else
-        myDiv.innerHTML = "";
+    myDiv.innerHTML = "";
 
     // Здесь по атрибуту isNew, определяется что это новая запись или уже существующая
     // в зависимости от этого будет вызываться различный метод контроллера: Add или Update
     var action: string;
     
+
     if (isNew) action = 'Books/Create';
     else action = 'Books/Update?BookId=' + bookId;
 
@@ -247,6 +274,7 @@ function SaveChanges(close: boolean = false) {
             // Если запрос выполнен без ошибок то присваиваем полученный с сервера html код, элементу customers_table
             if (data["isOk"]) {
                 if (close) {
+                    alert("dlg.dialog('close')");
                     dlg.dialog('close');                
                     $('#books_table_div').html(data["view"]);
                     $('#books_table_input').focus();
@@ -255,7 +283,6 @@ function SaveChanges(close: boolean = false) {
                 else {
                     $('#books_table_div').html(data["view"]);
                     if (isNew) {
-                        // Установим все поля ввода банковских счетов активными, поскольку контрагент уже записан в базу
                         bookId = data["BookId"];
                         SetDialogActive(dlg, data);
                     }
@@ -289,13 +316,4 @@ function msg(str) {
     var myDiv = document.getElementById("dialog_book_divmsg");
     myDiv.innerHTML = str;
 }
-
-
-// Если  нажато сочетание ctrl+Enter тогда сохраняем данные и закрываем диалог
-dlg.keypress(function (e) {
-    if (e.ctrlKey && e.keyCode == 10) {
-        e.preventDefault();
-        SaveChanges();
-    }
-});
 

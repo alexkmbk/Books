@@ -8,6 +8,10 @@ using Books.Models;
 using NHibernate;
 using NHibernate.Linq;
 using Microsoft.Extensions.PlatformAbstractions;
+using System.IO;
+using Microsoft.AspNet.Mvc.ViewEngines;
+using Microsoft.AspNet.Mvc.Rendering;
+using Microsoft.AspNet.Mvc.ViewFeatures;
 
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
@@ -21,6 +25,30 @@ namespace Books.Controllers
         public PublishersController(IApplicationEnvironment appEnvironment)
         {
             _appEnvironment = appEnvironment;
+        }
+
+        // Функция для формирования html кода по переданному шаблону вида и модели
+        // результат возвращается в виде строки
+        // это позволяет передавать готовый html код в ответ на ajax запросы с клиента
+        public string RenderPartialViewToString(string viewName, object model)
+        {
+            if (string.IsNullOrEmpty(viewName))
+                viewName = ActionContext.ActionDescriptor.Name;
+
+            ViewData.Model = model;
+
+            using (StringWriter sw = new StringWriter())
+            {
+                var engine = Resolver.GetService(typeof(ICompositeViewEngine)) as ICompositeViewEngine;
+                ViewEngineResult viewResult = engine.FindPartialView(ActionContext, viewName);
+
+                ViewContext viewContext = new ViewContext(ActionContext, viewResult.View, ViewData, TempData, sw, new HtmlHelperOptions());
+
+                var t = viewResult.View.RenderAsync(viewContext);
+                t.Wait();
+
+                return sw.GetStringBuilder().ToString();
+            }
         }
 
         // GET: /<controller>/
@@ -144,6 +172,17 @@ namespace Books.Controllers
             catch (Exception exc)
             {
                 return Json(new { isOk = false, Errors = exc.Message });
+            }
+        }
+
+        // Форма выбора издателей
+        [HttpGet]
+        public IActionResult GetChoiceForm()
+        {
+            using (ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment))
+            {
+                ViewData["title"] = "Publishers";
+                return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("ChoiceForm", session.Query<Publisher>()) });
             }
         }
 

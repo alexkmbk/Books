@@ -4,9 +4,7 @@ function SetRefInput(valueInputName, idInputName, container, autoCompleteSource,
     var choiceFormIsOpen = false;
     // show choice button if necessary
     if (isChoiceForm) {
-        var button;
-        var foundButtons = valueInput.parent().find(".ChoiceFormButton");
-        if (foundButtons.length == 0) {
+        if (valueInput.parent().find(".ChoiceFormButton").length == 0) {
             var button = $(document.createElement('input'));
             button.attr("type", "button");
             button.val("...");
@@ -14,17 +12,15 @@ function SetRefInput(valueInputName, idInputName, container, autoCompleteSource,
             var height = 25; //input.height();
             button.width(height);
             button.height(height);
+            button.on("click", function (e) {
+                e.preventDefault();
+                choiceFormIsOpen = true;
+                var event = new CustomEvent(valueInputName + "_ChoiceFormClick");
+                container.get(0).dispatchEvent(event);
+                return false;
+            });
+            valueInput.parent().append(button);
         }
-        else
-            button = foundButtons.eq(0);
-        button.on("click", function (e) {
-            e.preventDefault();
-            choiceFormIsOpen = true;
-            var event = new CustomEvent(valueInputName + "_ChoiceFormClick");
-            container.get(0).dispatchEvent(event);
-            return false;
-        });
-        valueInput.parent().append(button);
         if (autoCompleteSource) {
             var idInput = idInput;
             valueInput.autocomplete({

@@ -1,0 +1,59 @@
+﻿@model Books.Models.Book
+
+<div id="dialog_book" title="@ViewData["Title"]" style="display:none;">
+
+    @* Диалог выбора авторов *@
+    <div id="dialog_authors">
+
+    </div>
+
+    @* Диалог выбора издателей *@
+    <div id="dialog_publishers">
+
+    </div>
+
+    <form method="POST" id="form_book" action="javascript:void(null);" onsubmit="SaveChanges(true)">
+        <div name="fields" class="group_col">
+            <table class="fields">
+                <tr>
+                    <td>Name:</td>
+                    <td><input type="text" name="Name" value=@Model.Name autofocus required /></td>
+                </tr>
+                <tr><td><input name="Id" type="hidden" value=@Model.Id></td></tr>
+                <tr>
+                    <td>Description:</td>
+                    <td><input type="text" name="Description" value=@Model.Description /></td>
+                </tr>
+                <tr>
+                    <td>Price:</td>
+                    <td><input type="text" name="Price" value=@Model.Price /></td>
+                </tr>
+
+                <tr>
+                    <td>Publisher:</td>
+                    <td><input type="text" name="PublisherName" value=@ViewData["PublisherName"] /></td>
+                </tr>
+                <tr>
+                    <td><input type="hidden" name="PublisherId" value=@ViewData["PublisherId"] /></td>
+                </tr>
+
+                <tr>
+                    <td>Published at:</td>
+                    <td><input type="text" name="PublishedAt" value=@Model.PublishedAt /></td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="authors_div" class="group_col">
+            <div id="authors_table_div">
+            </div>
+
+            <div id="dialog_book_panel" class="group_row footer">
+                <input name="SaveAndCloseButton" type="button" value="Записать и закрыть" class="btn btn-default" />
+                <input name="SaveButton" type="button" value="Записать" class="btn btn-default" />
+                <input type="button" value="Закрыть" class="btn btn-default" name="close" onclick="$('#dialog_book').dialog('close')" />
+            </div>
+        </div>
+        <div id="dialog_book_divmsg"></div>
+    </form>
+</div>

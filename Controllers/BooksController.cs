@@ -96,7 +96,7 @@ namespace Books.Controllers
         }
 
         [HttpPost]
-        public ActionResult Update(int BookId, string name, string description, int PublisherId, float price, DateTime PublishedAt)
+        public ActionResult Update(int BookId, string Name, string Description, int PublisherId, float Price, DateTime PublishedAt)
         {
             try
             {
@@ -106,9 +106,9 @@ namespace Books.Controllers
                     {
                         Book book = session.Get<Book>(BookId);
                         if (book==null) return Json(new { isOk = false, Errors = "The book was not found by given Id." });
-                        book.Name = name;
-                        book.Description = description;
-                        book.Price = price;
+                        book.Name = Name;
+                        book.Description = Description;
+                        book.Price = Price;
                         book.PublishedAt = PublishedAt;
                         if (PublisherId != 0)
                         {
@@ -122,9 +122,9 @@ namespace Books.Controllers
                         session.Update(book);
                         transaction.Commit();
                     }
+                    return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("_Table", session.Query<Book>()) });
                 }
-
-                return Json(new { isOk = true, Errors = "" });
+                
             }
             catch (Exception exc)
             {
@@ -177,7 +177,38 @@ namespace Books.Controllers
                 return Json(new { isOk = false, Errors = exc.Message });
             }
         }
-        
+
+        // Возвращает диалог редактирования книги
+        [HttpGet]
+        public IActionResult GetDialog(int Id, bool isNew)
+        {
+            using (ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment))
+            {
+                string publisherName = "";
+                int? publisherId = 0;
+                string title = "";
+
+                Book book = session.Get<Book>(Id);
+                if (book != null)
+                {
+                    var publisher = session.Get<Publisher>(book.publisher.Id);
+                    if (publisher != null)
+                    {
+                        publisherName = publisher.Name;
+                        publisherId = publisher.Id;
+                    }
+                    if (isNew) title = "New book";
+                    else title = book.Name;
+                }
+                else book = new Book();
+
+                ViewData["PublisherName"] = publisherName;
+                ViewData["PublisherId"] = publisherId;
+                ViewData["Title"] = title;
+                
+                return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("Dialog", book) });
+            }
+        }
 
     }
 }

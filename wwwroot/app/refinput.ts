@@ -6,26 +6,25 @@
 
         // show choice button if necessary
         if (isChoiceForm) {
-            var button: JQuery;
-            var foundButtons = valueInput.parent().find(".ChoiceFormButton");
-            if (foundButtons.length == 0) {
-                var button = $(document.createElement('input'));
+            if (valueInput.parent().find(".ChoiceFormButton").length == 0) {
+
+                var button: JQuery = $(document.createElement('input'));
                 button.attr("type", "button");
                 button.val("...");
                 button.addClass("ChoiceFormButton");
                 var height = 25;//input.height();
                 button.width(height);
                 button.height(height);
+
+                button.on("click", function (e: MouseEvent) {
+                    e.preventDefault();
+                    choiceFormIsOpen = true;
+                    var event = new CustomEvent(valueInputName + "_ChoiceFormClick");
+                    container.get(0).dispatchEvent(event);
+                    return false;
+                });
+                valueInput.parent().append(button);
             }
-            else button = foundButtons.eq(0);
-            button.on("click", function (e: MouseEvent) {
-                e.preventDefault();
-                choiceFormIsOpen = true;
-                var event = new CustomEvent(valueInputName + "_ChoiceFormClick");
-                container.get(0).dispatchEvent(event);
-                return false;
-            });
-            valueInput.parent().append(button);
             if (autoCompleteSource) {
                 var idInput = idInput;
                 valueInput.autocomplete({

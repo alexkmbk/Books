@@ -23,11 +23,6 @@ function InitBooksTable() {
     panel.find("input[name='EditButton']").get(0).onclick = books_table.Edit;
     panel.find("input[name='DeleteButton']").get(0).onclick = books_table.BeforeDelete;
 
-
-    panel = $("#dialog_book_panel");
-    panel.find("input[name='SaveAndCloseButton']").get(0).onclick = BookDialog.SaveAndClose;
-    panel.find("input[name='SaveButton']").get(0).onclick = BookDialog.Save;
-
 }
 
 InitBooksTable();

@@ -2,59 +2,9 @@
 
 <h1>@ViewBag.Title</h1>
 
-@*Customer dialog*@
-<div id="dialog_book" title="Book" style="display:none;">
+<div id="dialog_book_div">
 
-    @* Диалог выбора банков *@
-    <div id="dialog_authors">
-
-    </div>
-    <form method="POST" id="form_book" action="javascript:void(null);" onsubmit="SaveChanges(true)">
-        <div name="fields" class="group_col">
-            <table class="fields">
-                <tr>
-                    <td>Name:</td>
-                    <td><input type="text" name="Name" value="" autofocus required /></td>
-                </tr>
-                <tr><td><input name="Id" type="hidden"></td></tr>
-                <tr>
-                    <td>Description:</td>
-                    <td><input type="text" name="Description" value="" /></td>
-                </tr>
-                <tr>
-                    <td>Price:</td>
-                    <td><input type="text" name="Price" value="" /></td>
-                </tr>
-
-                <tr>
-                    <td>Publisher:</td>
-                    <td><input type="text" name="PublisherName" value="" /></td>
-                </tr>
-                <tr>
-                    <td><input type="hidden" name="PublisherId" value="" /></td>
-                </tr>
-
-                <tr>
-                    <td>Published at:</td>
-                    <td><input type="text" name="PublishedAt" value="" /></td>
-                </tr>
-            </table>
-        </div>
-
-        <div id="authors_div" class="group_col">
-            <div id="authors_table_div">
-            </div>
-
-            <div id="dialog_book_panel" class="group_row footer">
-                <input name="SaveAndCloseButton" type="button" value="Записать и закрыть" class="btn btn-default" />
-                <input name="SaveButton" type="button" value="Записать" class="btn btn-default" />
-                <input type="button" value="Закрыть" class="btn btn-default" name="close" onclick="$('#dialog_book').dialog('close')" />
-            </div>
-        </div>
-        <div id="dialog_book_divmsg"></div>
-    </form>
 </div>
-
 
 <div id="books_panel">
     @*Командная панель с кнопками управления таблицей*@

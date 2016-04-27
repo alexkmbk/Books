@@ -4,6 +4,7 @@
 /// <reference path="app/books.dialog.js" />
 /// <reference path="app/books.index.js" />
 /// <reference path="app/keyboard_code_enums.js" />
+/// <reference path="app/publishers_choice_dialog.js" />
 /// <reference path="app/refinput.js" />
 /// <reference path="app/table.js" />
 /// <reference path="jquery-ui-1.11.4.custom/external/jquery/jquery.js" />
