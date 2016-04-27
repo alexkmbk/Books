@@ -132,6 +132,7 @@ export function OpenEditDialog(_isNew: boolean, _Id = null, Name = null, Descrip
     // Удалим ранее созданный диалог, чтобы очистить все свойства
     if (dlg.hasClass('ui-dialog-content')) {
         dlg.dialog('destroy');
+        dlg.find("input[type='text']").val("");
     }
 
     var fields = dlg.find("div[name='fields']").eq(0);
@@ -142,8 +143,9 @@ export function OpenEditDialog(_isNew: boolean, _Id = null, Name = null, Descrip
         dateFormat: "yy-mm-dd",
         
     });
-
+    
     if (!_isNew) {
+        
         dlg.find("input[name='Name']").val(Name);
         dlg.find("input[name='Id']").val(_Id);
         dlg.find("input[name='Description']").val(Description);

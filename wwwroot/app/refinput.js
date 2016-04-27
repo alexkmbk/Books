@@ -1,27 +1,33 @@
 function SetRefInput(valueInputName, idInputName, container, autoCompleteSource, isChoiceForm) {
-    this.valueInput = container.find("input[name = '" + valueInputName + "']");
-    this.idInput = container.find("input[name = '" + idInputName + "']");
-    var refinput = this;
+    var valueInput = container.find("input[name = '" + valueInputName + "']");
+    var idInput = container.find("input[name = '" + idInputName + "']");
+    var choiceFormIsOpen = false;
     // show choice button if necessary
     if (isChoiceForm) {
-        var button = $(document.createElement('input'));
-        button.attr("type", "button");
-        button.val("...");
-        button.addClass("ChoiceFormButton");
-        var height = 25; //input.height();
-        button.width(height);
-        button.height(height);
+        var button;
+        var foundButtons = valueInput.parent().find(".ChoiceFormButton");
+        if (foundButtons.length == 0) {
+            var button = $(document.createElement('input'));
+            button.attr("type", "button");
+            button.val("...");
+            button.addClass("ChoiceFormButton");
+            var height = 25; //input.height();
+            button.width(height);
+            button.height(height);
+        }
+        else
+            button = foundButtons.eq(0);
         button.on("click", function (e) {
             e.preventDefault();
-            refinput.choiceFormIsOpen = true;
+            choiceFormIsOpen = true;
             var event = new CustomEvent(valueInputName + "_ChoiceFormClick");
             container.get(0).dispatchEvent(event);
             return false;
         });
-        refinput.valueInput.parent().append(button);
+        valueInput.parent().append(button);
         if (autoCompleteSource) {
-            var idInput = refinput.idInput;
-            this.valueInput.autocomplete({
+            var idInput = idInput;
+            valueInput.autocomplete({
                 source: autoCompleteSource,
                 minLength: 1,
                 select: function (event, ui) {
@@ -34,7 +40,7 @@ function SetRefInput(valueInputName, idInputName, container, autoCompleteSource,
                     this.valueInput.autocomplete("widget").zIndex(10 + (+z));
                 },
             });
-            this.valueInput.autocomplete("widget").insertAfter(container);
+            valueInput.autocomplete("widget").insertAfter(container);
         }
     }
 }

@@ -107,6 +107,7 @@ System.register(["./authors_choice_dialog"], function(exports_1) {
         // Удалим ранее созданный диалог, чтобы очистить все свойства
         if (dlg.hasClass('ui-dialog-content')) {
             dlg.dialog('destroy');
+            dlg.find("input[type='text']").val("");
         }
         var fields = dlg.find("div[name='fields']").eq(0);
         SetRefInput("PublisherName", "PublisherId", fields, "Publishers/GetAutocompletePublishersList", true);
@@ -132,7 +133,6 @@ System.register(["./authors_choice_dialog"], function(exports_1) {
                 success: function (data) { PublisherName = data["name"]; }
             });
             dlg.find("input[name='PublisherName']").val(PublisherName);
-            alert(PublisherName);
         }
         else
             dlg.attr('title', 'Add new book');
