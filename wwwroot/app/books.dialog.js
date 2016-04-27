@@ -108,7 +108,7 @@ System.register(["./authors_choice_dialog"], function(exports_1) {
         if (dlg.hasClass('ui-dialog-content')) {
             dlg.dialog('destroy');
         }
-        var publisherRefInput = new RefInput("PublisherName", "PublisherId", dlg.find("#PublisherRefInput"), "Publishers/GetAutocompletePublishersList", true);
+        SetRefInput("PublisherName", "PublisherId", dlg.find("div[name='fields']").eq(0), "Publishers/GetAutocompletePublishersList", true);
         if (!_isNew) {
             dlg.find("input[name='Name']").val(Name);
             dlg.find("input[name='Id']").val(_Id);

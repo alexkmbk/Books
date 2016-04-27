@@ -145,8 +145,10 @@ var Table = (function () {
                 }
                 _this.inEditing = true;
             }
-            var event = new CustomEvent(_this.name + "_Pick", { 'detail': rowData });
-            _this.parentForm.get(0).dispatchEvent(event);
+            if (!isNew) {
+                var event = new CustomEvent(_this.name + "_Pick", { 'detail': rowData });
+                _this.parentForm.get(0).dispatchEvent(event);
+            }
         };
         this.WasChanged = function () {
             var res = false;

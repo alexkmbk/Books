@@ -10,21 +10,22 @@
 
     </div>
     <form method="POST" id="form_book" action="javascript:void(null);" onsubmit="SaveChanges(true)">
-        <table class="fields">
-            <tr>
-                <td>Name:</td>
-                <td><input type="text" name="Name" value="" autofocus required /></td>
-            </tr>
-            <tr><td><input name="Id" type="hidden"></td></tr>
-            <tr>
-                <td>Description:</td>
-                <td><input type="text" name="Description" value="" /></td>
-            </tr>
-            <tr>
-                <td>Price:</td>
-                <td><input type="text" name="Price" value="" /></td>
-            </tr>
-            <div id="PublisherRefInput">
+        <div name="fields" class="group_col">
+            <table class="fields">
+                <tr>
+                    <td>Name:</td>
+                    <td><input type="text" name="Name" value="" autofocus required /></td>
+                </tr>
+                <tr><td><input name="Id" type="hidden"></td></tr>
+                <tr>
+                    <td>Description:</td>
+                    <td><input type="text" name="Description" value="" /></td>
+                </tr>
+                <tr>
+                    <td>Price:</td>
+                    <td><input type="text" name="Price" value="" /></td>
+                </tr>
+
                 <tr>
                     <td>Publisher:</td>
                     <td><input type="text" name="PublisherName" value="" /></td>
@@ -32,13 +33,14 @@
                 <tr>
                     <td><input type="hidden" name="PublisherId" value="" /></td>
                 </tr>
-            </div>
-            <tr>
-                <td>Published at:</td>
-                <td><input type="text" name="PublishedAt" value="" /></td>
-            </tr>
-           
-        </table>
+
+                <tr>
+                    <td>Published at:</td>
+                    <td><input type="text" name="PublishedAt" value="" /></td>
+                </tr>
+            </table>
+        </div>
+
         <div id="authors_div" class="group_col">
             <div id="authors_table_div">
             </div>

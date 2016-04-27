@@ -217,8 +217,10 @@ class Table {
             }
             this.inEditing = true;
         }
-        var event = new CustomEvent(this.name + "_Pick", { 'detail': rowData });
-        this.parentForm.get(0).dispatchEvent(event);
+        if (!isNew) {
+            var event = new CustomEvent(this.name + "_Pick", { 'detail': rowData });
+            this.parentForm.get(0).dispatchEvent(event);
+        }
     }
 
     public WasChanged = () => {

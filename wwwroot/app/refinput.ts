@@ -1,15 +1,7 @@
-﻿class RefInput {
-    valueInputName: string;
-    idInputName: string;
-    container: JQuery;
-    autoCompleteSource: string;
-    isChoiceForm: boolean;
-    valueInput: JQuery;
-    idInput: JQuery;
-    choiceFormIsOpen: boolean;
-    constructor(valueInputName: string, idInputName: string, container: JQuery, autoCompleteSource: string, isChoiceForm: boolean) {
-        this.valueInput = container.find("input[name = '" + valueInputName + "']").eq(0);
-        this.idInput = container.find("input[name = '" + idInputName + "']").eq(0);
+﻿
+   function  SetRefInput(valueInputName: string, idInputName: string, container: JQuery, autoCompleteSource: string, isChoiceForm: boolean) {
+        this.valueInput = container.find("input[name = '" + valueInputName + "']");
+        this.idInput = container.find("input[name = '" + idInputName + "']");
         var refinput = this;
 
         // show choice button if necessary
@@ -28,11 +20,9 @@
                 container.get(0).dispatchEvent(event);
                 return false;
             });
-            this.valueInput.append(button);
-
-            
+            refinput.valueInput.parent().append(button);
             if (autoCompleteSource) {
-                var idInput = this.idInput;
+                var idInput = refinput.idInput;
                 this.valueInput.autocomplete({
                     source: autoCompleteSource,
                     minLength: 1,
@@ -43,13 +33,10 @@
                     },
                     open: function () {
                         var z = window.document.defaultView.getComputedStyle(container.get(0)).getPropertyValue('z-index');
-                        //container.autoComplete.zIndex(10 + (+z));
+                        this.valueInput.autocomplete("widget").zIndex(10 + (+z));
                     },
                 });
-               // table.autoComplete = input.autocomplete("widget");
-               // table.autoComplete.insertAfter(table.parentForm);
+                this.valueInput.autocomplete("widget").insertAfter(container);
             }
         }
     }
-
-}

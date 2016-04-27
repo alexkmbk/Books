@@ -61,7 +61,7 @@ namespace Books.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create(string name, string description, int idPublisher, float price, DateTime publishedAt)
+        public ActionResult Create(string name, string description, int PublisherId, float price, DateTime publishedAt)
         {
             try
             {
@@ -74,9 +74,9 @@ namespace Books.Controllers
                         book.Description = description;
                         book.Price = price;
                         book.PublishedAt = publishedAt;
-                        if (idPublisher != 0)
+                        if (PublisherId != 0)
                         {
-                            var publisher = session.Get<Publisher>(idPublisher);
+                            var publisher = session.Get<Publisher>(PublisherId);
                             if (publisher == null) return Json(new { isOk = false, Errors = "The publisher was not found by given Id." });
 
                             book.publisher = publisher;
