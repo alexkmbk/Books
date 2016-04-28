@@ -1,18 +1,18 @@
-﻿@model IEnumerable<Books.Models.Publisher>
+﻿@model IEnumerable<Books.Models.Author>
 
 <h1>@ViewBag.Title</h1>
 
 @*Диалог выбора издателей*@
-<div id="dialog_publishers_choiceform" title="Publishers choice" style="display:none;">
-    <div id="publishers_table_div">
-        <a id="publishers_table_input" href="#publishers_table"></a>
+<div id="dialog_authors_choiceform" title="authors choice" style="display:none;">
+    <div id="authors_choicetable_div">
+        <a id="authors_choicetable_input" href="#authors_choicetable"></a>
 
         @if (Model.Count() == 0)
         {
             <div>Нет данных для отображения</div>
         }
         else {
-            <table id="publishers_table" class="table table-striped table-bordered table-condensed scroll">
+            <table id="authors_choicetable" class="table table-striped table-bordered table-condensed scroll">
                 <thead>
                     <tr>
                         <th>Name</th>

@@ -1,12 +1,12 @@
 ﻿///<reference path="../lib/jquery/jqueryui.d.ts" />
 ///<reference path="../lib/jquery/jquery.d.ts" />
 
-var banks_table: Table;
+var authors_choicetable: Table;
 
-function BankChoiceForm_InitDialog(parent: JQuery, banksdlg: JQuery, PickEventHandler: Function, CloseDialogHandler: Function) {
+function AuthorChoiceForm_InitDialog(parent: JQuery, authorsdlg: JQuery, PickEventHandler: Function, CloseDialogHandler: Function) {
 
-    banksdlg.attr('title', 'Выбор банка');
-    banksdlg.dialog({
+    authorsdlg.attr('title', 'Выбор банка');
+    authorsdlg.dialog({
         modal: true,
         width: "50%",
         position: { my: "bottom", at: "bottom", of: window },
@@ -16,43 +16,40 @@ function BankChoiceForm_InitDialog(parent: JQuery, banksdlg: JQuery, PickEventHa
         close: function () { CloseDialogHandler(); }
     });
 
-    var cols: Column[] = [new Column({ name: "BankBIC", isVisible: true }),
-        new Column({ name: "BankName", isVisible: true }),
-        new Column({ name: "BankId", isVisible: false }),
-        new Column({ name: "BankAccountId", isVisible: false })];
-    banks_table = new Table("banks_table", false, cols, banksdlg, cols[3], 200);
+    var cols: Column[] = [new Column({ name: "Id", isVisible: false }),
+        new Column({ name: "Name", isVisible: true })];
+    authors_choicetable = new Table("authors_choicetable", false, cols, authorsdlg, cols[0], 200);
 
-    $("#banks_panel").find("input[name='Choice']").get(0).onclick = banks_table.Edit;
+    authorsdlg.find("div[name='dialog_buttons_panel']").find("input[name='Choice']").get(0).onclick = authors_choicetable.Edit;
 
     //Выбор
-    banksdlg.get(0).addEventListener("banks_table_Pick", function (e: any) {
-        banksdlg.dialog("close");
-        banksdlg.dialog("destroy");
+    authorsdlg.get(0).addEventListener("authors_choicetable_Pick", function (e: any) {
+        authorsdlg.dialog("close");
+        authorsdlg.dialog("destroy");
         PickEventHandler(e.detail);
-        banks_table = null;
+        authors_choicetable = null;
     });
   
 }
 
 // Открывает диалог редактирования свойств
-export function OpenBanksChoiceDialog(parent: JQuery, PickEventHandler: Function, CloseDialogHandler: Function) {
+export function OpenAuthorsChoiceDialog(parent: JQuery, PickEventHandler: Function, CloseDialogHandler: Function) {
 
-    var banksdlg = $("#dialog_banks_choiceform");
-    if (banksdlg) {
+    var authorsdlg = $("#dialog_authors_choiceform");
+    if (authorsdlg) {
         // Удалим ранее созданный диалог, чтобы очистить все свойства
-        if (banksdlg.hasClass('ui-dialog-content')) {
-            banksdlg.dialog('destroy');
+        if (authorsdlg.hasClass('ui-dialog-content')) {
+            authorsdlg.dialog('destroy');
         }
     }
         
     $.ajax({
         type: 'GET',
-        url: 'Customers/GetBanksChoiceForm',
+        url: 'Authors/GetChoiceForm',
         success: function (data) {
-            // Если запрос выполнен без ошибок то присваиваем полученный с сервера html код, элементу BankAccountsTable
             if (data["isOk"]) {
                 parent.html(data["view"]);
-                BankChoiceForm_InitDialog(parent, $("#dialog_banks_choiceform"), PickEventHandler, CloseDialogHandler);
+                AuthorChoiceForm_InitDialog(parent, $("#dialog_authors_choiceform"), PickEventHandler, CloseDialogHandler);
             }
             else {
                 // Если запрос обработан, но произошла ошибка
@@ -67,6 +64,6 @@ export function OpenBanksChoiceDialog(parent: JQuery, PickEventHandler: Function
 }
 
 function msg(str) {
-    var myDiv = document.getElementById("dialog_banks_choiceform_divmsg");
+    var myDiv = document.getElementById("dialog_authors_choiceform_divmsg");
     myDiv.innerHTML = str;
 }

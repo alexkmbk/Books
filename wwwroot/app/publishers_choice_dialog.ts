@@ -20,7 +20,7 @@ function PublisherChoiceForm_InitDialog(parent: JQuery, publishersdlg: JQuery, P
         new Column({ name: "Name", isVisible: true })];
     publishers_table = new Table("publishers_table", false, cols, publishersdlg, cols[0], 200);
 
-    //$("#publishers_panel").find("input[name='Choice']").get(0).onclick = publishers_table.Edit;
+    publishersdlg.find("div[name='dialog_buttons_panel']").find("input[name='Choice']").get(0).onclick = publishers_table.Edit;
 
     //Выбор
     publishersdlg.get(0).addEventListener("publishers_table_Pick", function (e: any) {

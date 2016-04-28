@@ -82,14 +82,14 @@ function InitDialog() {
         saving = true;
 
         action = 'Books/AddAuthorToBook';
-        rowdata = { AuthorId: e.detail["AuthorId"], BookId: bookId }
+        rowdata = { AuthorId: e.detail["Id"], BookId: bookId }
         $.ajax({
             type: 'POST',
             url: action,
             data: rowdata,
             success: function (data) {
                 if (data["isOk"]) {
-                    authors_table.EndEditing(data["AuthorId"]);
+                    authors_table.EndEditing(data["Id"]);
                     saving = false;
                 }
                 else {
@@ -107,7 +107,7 @@ function InitDialog() {
     });
 
     authors_table.elem.addEventListener("authors_table_ChoiceFormClick_Name", function (e: any) {
-        AuthorsChoiceDialog.OpenBanksChoiceDialog($("#dialog_authors"), function (rowData: any) {
+        AuthorsChoiceDialog.OpenAuthorsChoiceDialog($("#dialog_authors"), function (rowData: any) {
             authors_table.SetInputValue("Id", rowData["Id"]);
             authors_table.SetInputValue("Name", rowData["Name"]);
         },
@@ -274,7 +274,6 @@ function SaveChanges(close: boolean = false) {
             // Если запрос выполнен без ошибок то присваиваем полученный с сервера html код, элементу customers_table
             if (data["isOk"]) {
                 if (close) {
-                    alert("dlg.dialog('close')");
                     dlg.dialog('close');                
                     $('#books_table_div').html(data["view"]);
                     $('#books_table_input').focus();
