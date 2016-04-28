@@ -34,6 +34,10 @@ function InitDialog() {
                     $("#authors_table_input").focus();
                 }
             }
+        },
+        close: function () {
+            $(this).dialog('destroy').remove();
+            dlg = undefined;
         }
     });
 
@@ -122,13 +126,13 @@ function InitDialog() {
 }
 
 // Открывает диалог редактирования свойств
-export function OpenEditDialog(_isNew: boolean, _Id = null, Name = null, Description = null, PublisherId = null, Price = null, PublishedAt = null, _parentForm: Window) {
+export function OpenEditDialog(_isNew: boolean, _Id = null, _parentForm: Window) {
 
     parentForm = _parentForm;
 
     // Удалим ранее созданный диалог, чтобы очистить все свойства
-   // if (dlg.hasClass('ui-dialog-content')) {
-     //   dlg.dialog('destroy');
+    //if (dlg != undefined && dlg.hasClass('ui-dialog-content')) {
+    //    dlg.dialog('destroy').remove();
         //dlg.find("input[type='text']").val("");
     //}
 
@@ -176,29 +180,6 @@ export function OpenEditDialog(_isNew: boolean, _Id = null, Name = null, Descrip
                 });
 
                 bookId = _Id;
-
-               /* if (!_isNew) {
-
-                    dlg.find("input[name='Name']").val(Name);
-                    dlg.find("input[name='Id']").val(_Id);
-                    dlg.find("input[name='Description']").val(Description);
-                    dlg.find("input[name='Price']").val(Price);
-                    dlg.find("input[name='PublisherId']").val(PublisherId);
-                    dlg.find("input[name='PublishedAt']").val(PublishedAt);
-                    dlg.attr('title', 'Book ' + Name);
-                    bookId = _Id;
-                    var PublisherName;
-                    $.ajax({
-                        async: false,
-                        type: 'GET',
-                        url: 'Publishers/GetName',
-                        data: { 'Id': PublisherId },
-                        success: function (data) { PublisherName = data["name"] }
-                    });
-                    dlg.find("input[name='PublisherName']").val(PublisherName);
-                }
-                else
-                    dlg.attr('title', 'Add new book');*/
 
                 isNew = _isNew;
     

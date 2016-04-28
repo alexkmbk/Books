@@ -26,10 +26,10 @@ System.register(["./books.dialog"], function(exports_1) {
             InitBooksTable();
             window.addEventListener("books_table_Pick", function (e) {
                 var rowdata = e.detail;
-                BookDialog.OpenEditDialog(false, rowdata['Id'], rowdata['Name'], rowdata['Description'], rowdata['PublisherId'], rowdata['Price'], rowdata['PublishedAt'], window);
+                BookDialog.OpenEditDialog(false, rowdata['Id'], window);
             });
             window.addEventListener("books_table_New", function (e) {
-                BookDialog.OpenEditDialog(true, null, null, null, null, null, null, window);
+                BookDialog.OpenEditDialog(true, null, window);
             });
             //Удалить запись
             window.addEventListener("books_table_BeforeDelete", function (e) {

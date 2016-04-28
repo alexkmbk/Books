@@ -21,6 +21,10 @@ System.register(["./authors_choice_dialog", "./publishers_choice_dialog"], funct
                         $("#authors_table_input").focus();
                     }
                 }
+            },
+            close: function () {
+                $(this).dialog('destroy').remove();
+                dlg = undefined;
             }
         });
         var cols = [new Column({ name: "Id", isVisible: false }),
@@ -94,17 +98,12 @@ System.register(["./authors_choice_dialog", "./publishers_choice_dialog"], funct
         });
     }
     // Открывает диалог редактирования свойств
-    function OpenEditDialog(_isNew, _Id, Name, Description, PublisherId, Price, PublishedAt, _parentForm) {
+    function OpenEditDialog(_isNew, _Id, _parentForm) {
         if (_Id === void 0) { _Id = null; }
-        if (Name === void 0) { Name = null; }
-        if (Description === void 0) { Description = null; }
-        if (PublisherId === void 0) { PublisherId = null; }
-        if (Price === void 0) { Price = null; }
-        if (PublishedAt === void 0) { PublishedAt = null; }
         parentForm = _parentForm;
         // Удалим ранее созданный диалог, чтобы очистить все свойства
-        // if (dlg.hasClass('ui-dialog-content')) {
-        //   dlg.dialog('destroy');
+        //if (dlg != undefined && dlg.hasClass('ui-dialog-content')) {
+        //    dlg.dialog('destroy').remove();
         //dlg.find("input[type='text']").val("");
         //}
         $.ajax({
@@ -144,28 +143,6 @@ System.register(["./authors_choice_dialog", "./publishers_choice_dialog"], funct
                         dateFormat: "yy-mm-dd",
                     });
                     bookId = _Id;
-                    /* if (!_isNew) {
-     
-                         dlg.find("input[name='Name']").val(Name);
-                         dlg.find("input[name='Id']").val(_Id);
-                         dlg.find("input[name='Description']").val(Description);
-                         dlg.find("input[name='Price']").val(Price);
-                         dlg.find("input[name='PublisherId']").val(PublisherId);
-                         dlg.find("input[name='PublishedAt']").val(PublishedAt);
-                         dlg.attr('title', 'Book ' + Name);
-                         bookId = _Id;
-                         var PublisherName;
-                         $.ajax({
-                             async: false,
-                             type: 'GET',
-                             url: 'Publishers/GetName',
-                             data: { 'Id': PublisherId },
-                             success: function (data) { PublisherName = data["name"] }
-                         });
-                         dlg.find("input[name='PublisherName']").val(PublisherName);
-                     }
-                     else
-                         dlg.attr('title', 'Add new book');*/
                     isNew = _isNew;
                     // заполним таблицу авторов, здесь повторный вызов сервера, надо бы перенести все это на сервер
                     $.ajax({

@@ -62,13 +62,13 @@ namespace Books.Controllers
         [HttpPost]
         public ActionResult Create(string name, string description, int PublisherId, float price, DateTime publishedAt)
         {
+            Book book = new Book();
             try
             {
                 using (ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment))
                 {
                     using (ITransaction transaction = session.BeginTransaction())
                     {
-                        Book book = new Book();
                         book.Name = name;
                         book.Description = description;
                         book.Price = price;
@@ -87,7 +87,7 @@ namespace Books.Controllers
                     }
                 }
 
-                return Json(new { isOk = true, Errors = "" });
+                return Json(new { isOk = true, Errors = "", Id=book.Id });
             }
             catch (Exception exc)
             {

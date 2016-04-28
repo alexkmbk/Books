@@ -17,29 +17,29 @@
             <table class="fields">
                 <tr>
                     <td>Name:</td>
-                    <td><input type="text" name="Name" value=@Model.Name autofocus required /></td>
+                    <td><input type="text" name="Name" value="@Model.Name" autofocus required /></td>
                 </tr>
-                <tr><td><input name="Id" type="hidden" value=@Model.Id></td></tr>
+                <tr><td><input name="Id" type="hidden" value="@Model.Id"></td></tr>
                 <tr>
                     <td>Description:</td>
-                    <td><input type="text" name="Description" value=@Model.Description /></td>
+                    <td><input type="text" name="Description" value="@Model.Description" /></td>
                 </tr>
                 <tr>
                     <td>Price:</td>
-                    <td><input type="text" name="Price" value=@Model.Price /></td>
+                    <td><input type="text" name="Price" value="@Model.Price" /></td>
                 </tr>
 
                 <tr>
                     <td>Publisher:</td>
-                    <td><input type="text" name="PublisherName" value=@ViewData["PublisherName"] /></td>
+                    <td><input type="text" name="PublisherName" value="@ViewData["PublisherName"]" /></td>
                 </tr>
                 <tr>
-                    <td><input type="hidden" name="PublisherId" value=@ViewData["PublisherId"] /></td>
+                    <td><input type="hidden" name="PublisherId" value="@ViewData["PublisherId"]" /></td>
                 </tr>
 
                 <tr>
                     <td>Published at:</td>
-                    <td><input type="text" name="PublishedAt" value=@Model.PublishedAt /></td>
+                    <td><input type="text" name="PublishedAt" value="@Model.PublishedAt" /></td>
                 </tr>
             </table>
         </div>
