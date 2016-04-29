@@ -50,12 +50,32 @@ namespace Books.Controllers
         }
 
         // GET: /<controller>/
-        public IActionResult Index()
+        public IActionResult Index(int AuthorId, int PublisherId, bool ajax = false)
         {
+            List<Book> books;
             ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment);
 
-            var books = session.Query<Book>().ToList();
-            return View(books);
+            if (AuthorId != 0 && PublisherId != 0){
+                books = session.Query<Book>().Where(x => x.Authors.Contains(session.Get<Author>(AuthorId))&&x.publisher.Id==PublisherId).ToList();
+            }
+            else if (AuthorId!=0)
+            {
+                books = session.Query<Book>().Where(x => x.Authors.Contains(session.Get<Author>(AuthorId))).ToList();
+            }
+            else if (PublisherId != 0)
+            {
+                books = session.Query<Book>().Where(x => x.publisher.Id == PublisherId).ToList();
+            }
+            else
+                books = session.Query<Book>().ToList();
+
+            if (ajax)
+                return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("_Table", books) });
+            else
+            {
+                ViewData["title"] = "Books";
+                return View(books);
+            }
 
         }
 
@@ -122,7 +142,7 @@ namespace Books.Controllers
                         session.Update(book);
                         transaction.Commit();
                     }
-                    return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("_Table", session.Query<Book>()) });
+                    return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("_Table", session.Query<Book>().ToList()) });
                 }
                 
             }
@@ -145,7 +165,7 @@ namespace Books.Controllers
                         book.Id = id;
                         session.Delete(book);
                         transaction.Commit();
-                        return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("_Table", session.Query<Book>()) });
+                        return Json(new { isOk = true, Errors = "" });
                     }
                 }
 
@@ -171,7 +191,7 @@ namespace Books.Controllers
                                    {
                                        Id = row.IdAuthor,
                                        Name = author.Name,
-                                   });
+                                   }).ToList();
 
                 return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("_AuthorsTable", authors) });
             }

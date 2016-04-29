@@ -13,7 +13,11 @@ function PublisherChoiceForm_InitDialog(parent: JQuery, publishersdlg: JQuery, P
         open: function (event, ui) {
             $(this).parent().css('position', 'fixed');
         },
-        close: function () { CloseDialogHandler(); }
+        close: function () {
+            CloseDialogHandler();
+            $(this).dialog('destroy').remove();
+            publishersdlg = undefined;
+        }
     });
 
     var cols: Column[] = [new Column({ name: "Id", isVisible: false }),
@@ -25,7 +29,6 @@ function PublisherChoiceForm_InitDialog(parent: JQuery, publishersdlg: JQuery, P
     //Выбор
     publishersdlg.get(0).addEventListener("publishers_table_Pick", function (e: any) {
         publishersdlg.dialog("close");
-        publishersdlg.dialog("destroy");
         PickEventHandler(e.detail);
         publishers_table = null;
     });

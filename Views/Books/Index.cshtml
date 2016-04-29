@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<Books.Models.Book>
 
+
 <h1>@ViewBag.Title</h1>
 
 <div id="dialog_book_div">
@@ -7,13 +8,30 @@
 </div>
 
 <div id="books_panel">
+
+    @*Панель установки отборов в таблице*@
+    <div name="filters" class="groupRow">
+        <div name="Author">
+            Author:
+            <input type="text" name="AuthorName" />
+            <input type="hidden" name="AuthorId" />
+        </div>
+        <div name="Publisher">
+            Publisher:
+            <input type="text" name="PublisherName" />
+            <input type="hidden" name="PublisherId" />
+        </div>
+
+        <div name = "dialog_authors_choice"></div>
+        <div name = "dialog_publishers_choice"></div>
+    </div>
     @*Командная панель с кнопками управления таблицей*@
     <input name="AddButton" type="button" value="Добавить" autofocus class="btn btn-default" />
     <input name="EditButton" type="button" value="Изменить" class="btn btn-default" />
     <input name="DeleteButton" type="button" value="Удалить" class="btn btn-default" />
 </div>
 
-@*Таблица с контрагентами*@
+@*Таблица с книгами*@
 <div id="books_table_div">
     @Html.Partial("_Table", Model)
 </div>

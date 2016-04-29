@@ -213,8 +213,6 @@ System.register(["./authors_choice_dialog", "./publishers_choice_dialog"], funct
                             dlg.dialog('close');
                         $('#books_table_div').html(data["view"]);
                         $('#books_table_input').focus();
-                        if (dlg != undefined)
-                            dlg.dialog('destroy');
                     }
                     else {
                         $('#books_table_div').html(data["view"]);

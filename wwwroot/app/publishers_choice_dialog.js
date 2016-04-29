@@ -11,7 +11,11 @@ System.register([], function(exports_1) {
             open: function (event, ui) {
                 $(this).parent().css('position', 'fixed');
             },
-            close: function () { CloseDialogHandler(); }
+            close: function () {
+                CloseDialogHandler();
+                $(this).dialog('destroy').remove();
+                publishersdlg = undefined;
+            }
         });
         var cols = [new Column({ name: "Id", isVisible: false }),
             new Column({ name: "Name", isVisible: true })];
@@ -20,7 +24,6 @@ System.register([], function(exports_1) {
         //Выбор
         publishersdlg.get(0).addEventListener("publishers_table_Pick", function (e) {
             publishersdlg.dialog("close");
-            publishersdlg.dialog("destroy");
             PickEventHandler(e.detail);
             publishers_table = null;
         });

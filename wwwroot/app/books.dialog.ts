@@ -258,7 +258,6 @@ function SaveChanges(close: boolean = false) {
                     if (dlg != undefined) dlg.dialog('close');                
                     $('#books_table_div').html(data["view"]);
                     $('#books_table_input').focus();
-                    if (dlg != undefined) dlg.dialog('destroy');
                 }
                 else {
                     $('#books_table_div').html(data["view"]);

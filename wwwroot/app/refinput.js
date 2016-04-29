@@ -1,4 +1,4 @@
-function SetRefInput(valueInputName, idInputName, container, autoCompleteSource, isChoiceForm) {
+function SetRefInput(valueInputName, idInputName, container, autoCompleteSource, isChoiceForm, ChangeValueHandler) {
     var valueInput = container.find("input[name = '" + valueInputName + "']");
     var idInput = container.find("input[name = '" + idInputName + "']");
     var choiceFormIsOpen = false;
@@ -30,6 +30,8 @@ function SetRefInput(valueInputName, idInputName, container, autoCompleteSource,
                     ui.item ?
                         idInput.val(ui.item.Id) :
                         idInput.val("");
+                    if (ChangeValueHandler)
+                        ChangeValueHandler();
                 },
                 open: function () {
                     var z = window.document.defaultView.getComputedStyle(container.get(0)).getPropertyValue('z-index');

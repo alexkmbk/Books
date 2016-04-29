@@ -132,6 +132,17 @@
                     table-layout: fixed;
                 }
 
+        .groupRow {
+            display: flex;
+            flex-flow: row;
+            margin:5px;
+        }
+
+        .groupCol {
+            display: flex;
+            flex-flow: column;
+            margin:5px;
+        }
 
         @*Стиль для подсвечивания строки таблицы*@ .table-striped tbody tr.highlight td {
             background-color: bisque;
@@ -172,9 +183,9 @@
     @RenderSection("scripts", required: false)
 
     <script>
-    System.config({
-          packages: { 'app': { defaultExtension: 'js' } }
-    });
+        System.config({
+            packages: { 'app': { defaultExtension: 'js' } }
+        });
     </script>
 
 </body>

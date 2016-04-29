@@ -5,7 +5,7 @@ var authors_choicetable: Table;
 
 function AuthorChoiceForm_InitDialog(parent: JQuery, authorsdlg: JQuery, PickEventHandler: Function, CloseDialogHandler: Function) {
 
-    authorsdlg.attr('title', 'Выбор банка');
+    authorsdlg.attr('title', 'Authors choice');
     authorsdlg.dialog({
         modal: true,
         width: "50%",
@@ -13,7 +13,11 @@ function AuthorChoiceForm_InitDialog(parent: JQuery, authorsdlg: JQuery, PickEve
         open: function (event, ui) {
             $(this).parent().css('position', 'fixed');
         },
-        close: function () { CloseDialogHandler(); }
+        close: function () {
+            CloseDialogHandler();
+            $(this).dialog('destroy').remove();
+            authorsdlg = undefined;
+        }
     });
 
     var cols: Column[] = [new Column({ name: "Id", isVisible: false }),
@@ -25,7 +29,6 @@ function AuthorChoiceForm_InitDialog(parent: JQuery, authorsdlg: JQuery, PickEve
     //Выбор
     authorsdlg.get(0).addEventListener("authors_choicetable_Pick", function (e: any) {
         authorsdlg.dialog("close");
-        authorsdlg.dialog("destroy");
         PickEventHandler(e.detail);
         authors_choicetable = null;
     });
@@ -39,7 +42,7 @@ export function OpenAuthorsChoiceDialog(parent: JQuery, PickEventHandler: Functi
     if (authorsdlg) {
         // Удалим ранее созданный диалог, чтобы очистить все свойства
         if (authorsdlg.hasClass('ui-dialog-content')) {
-            authorsdlg.dialog('destroy');
+            authorsdlg.dialog('destroy').remove();
         }
     }
         
