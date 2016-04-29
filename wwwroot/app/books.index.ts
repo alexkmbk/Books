@@ -38,7 +38,25 @@ window.addEventListener("books_table_New", function (e: any) {
 
 //Удалить запись
 window.addEventListener("books_table_BeforeDelete", function (e: any) {
-    window.location.href = "/Books/Delete?Id=" + e.detail['Id'];
+    var rowdata: Array<any> = e.detail;
+    $.ajax({
+        type: 'POST',
+        url: 'Books/Delete',
+        data: { Id: rowdata['Id']},
+        success: function (data) {
+            if (data["isOk"]) {
+                books_table.Delete(); // удалить строку в диалоге
+            }
+            else {
+                var myDiv = document.getElementById("dialog_book_divmsg");
+                myDiv.innerHTML = "Ошибка записи: " + data["Errors"];
+            }
+        },
+        error: function (xhr, str) {
+            var myDiv = document.getElementById("dialog_book_divmsg");
+            myDiv.innerHTML = "Ошибка записи: " + xhr.responseText;
+        }
+    });
 });
 
 window.addEventListener("books_table_AfterSave", function (e: any) {

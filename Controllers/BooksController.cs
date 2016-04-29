@@ -132,6 +132,30 @@ namespace Books.Controllers
             }
         }
 
+        [HttpPost]
+        public ActionResult Delete(int id)
+        {
+            try
+            {
+                using (ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment))
+                {
+                    using (ITransaction transaction = session.BeginTransaction())
+                    {
+                        Book book = new Book();
+                        book.Id = id;
+                        session.Delete(book);
+                        transaction.Commit();
+                        return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("_Table", session.Query<Book>()) });
+                    }
+                }
+
+            }
+            catch (Exception exc)
+            {
+                return Json(new { isOk = false, Errors = exc.Message });
+            }
+        }
+
         public IActionResult GetBookAuthorsForEdit(int bookId)
         {
             using (ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment))

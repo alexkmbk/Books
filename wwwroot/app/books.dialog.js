@@ -206,13 +206,15 @@ System.register(["./authors_choice_dialog", "./publishers_choice_dialog"], funct
             url: action,
             data: msg,
             success: function (data) {
-                // Если запрос выполнен без ошибок то присваиваем полученный с сервера html код, элементу customers_table
+                // Если запрос выполнен без ошибок то присваиваем полученный с сервера html код
                 if (data["isOk"]) {
                     if (close) {
-                        dlg.dialog('close');
+                        if (dlg != undefined)
+                            dlg.dialog('close');
                         $('#books_table_div').html(data["view"]);
                         $('#books_table_input').focus();
-                        dlg.dialog('destroy');
+                        if (dlg != undefined)
+                            dlg.dialog('destroy');
                     }
                     else {
                         $('#books_table_div').html(data["view"]);
