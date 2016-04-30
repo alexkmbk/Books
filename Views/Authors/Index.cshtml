@@ -3,6 +3,17 @@
 <h1>@Html.ViewData["Title"]</h1>
 
 <div id="authors_panel">
+
+    @*Панель установки отборов в таблице*@
+    <div name="filters" class="groupRow">
+        <div name="Book">
+            Book:
+            <input type="text" name="BookName" />
+            <input type="hidden" name="BookId" />
+        </div>
+        <div name="dialog_books_choice"></div>
+    </div>
+
     @*Командная панель с кнопками управления таблицей*@
     <input name="AddButton" type="button" value="Добавить" autofocus class="btn btn-default" />
     <input name="EditButton" type="button" value="Изменить" class="btn btn-default" />
@@ -18,81 +29,6 @@
 
 <script>
 
-     var saving;
-
-     var cols = [new Column({ name: "Id", isVisible: false }),
-                 new Column({ name: "Name", isVisible: true })];
-
-        var authors_table = new Table("authors_table", true, cols, $(window), cols[0]);
-
-        var panel = $("#authors_panel");
-        panel.find("input[name='AddButton']").get(0).onclick = authors_table.Add;
-        panel.find("input[name='EditButton']").get(0).onclick = authors_table.Edit;
-        panel.find("input[name='DeleteButton']").get(0).onclick = authors_table.BeforeDelete;
-
-        //Удалить запись
-        window.addEventListener("authors_table_BeforeDelete", function (e) {
-
-            var rowdata = e.detail;
-            $.ajax({
-                type: 'POST',
-                url: 'authors/Delete',
-                data: { Id: rowdata['Id'] },
-                success: function (data) {
-                    if (data["isOk"]) {
-                        authors_table.Delete(); // удалить строку в диалоге
-                    }
-                    else {
-                        var myDiv = document.getElementById("authors_divmsg");
-                        myDiv.innerHTML = "Ошибка записи: " + data["Errors"];
-                    }
-                },
-                error: function (xhr, str) {
-                    var myDiv = document.getElementById("authors_divmsg");
-                    myDiv.innerHTML = "Ошибка записи: " + xhr.responseText;
-                }
-            });
-        });
-
-        window.addEventListener("authors_table_SaveTable", function (e) {
-
-                var action;
-                var rowdata;
-
-                if (saving) return;
-
-                saving = true;
-
-                if (e.detail["Id"] == "") {
-                     action = 'Authors/Create';
-                    rowdata = { Name: e.detail["Name"]}
-                }
-                else {
-                    action = 'Authors/Update';
-                    rowdata = { Name: e.detail["Name"], Id: e.detail["Id"] }
-                }
-                $.ajax({
-                    type: 'POST',
-                    url: action,
-                    data: rowdata,
-                    success: function (data) {
-                        if (data["isOk"]) {
-                            authors_table.EndEditing(data["Id"]);
-                            saving = false;
-                        }
-                        else {
-                            var myDiv = document.getElementById("authors_divmsg");
-                            myDiv.innerHTML = "Ошибка записи: " + data["Errors"];
-                            saving = false;
-                        }
-                    },
-                    error: function (xhr, str) {
-                        var myDiv = document.getElementById("authors_divmsg");
-                        myDiv.innerHTML = "Ошибка записи: " + xhr.responseText;
-                        saving = false;
-                    }
-                });
-            });
-
+    System.import('app/authors.index.js');
 
 </script>

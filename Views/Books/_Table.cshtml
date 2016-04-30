@@ -12,6 +12,7 @@
                 <th>Price</th>
                 <th>Publisher</th>
                 <th>PublishedAt</th>
+                <th>Authors</th>
             </tr>
         </thead>
         <tbody>
@@ -33,6 +34,7 @@ else {
                 <th>Price</th>
                 <th>Publisher</th>
                 <th>PublishedAt</th>
+                <th>Authors</th>
             </tr>
         </thead>
         <tbody>
@@ -47,6 +49,7 @@ else {
                     <td>@e.Price</td>
                     <td>@e.publisher.Name</td>
                     <td>@e.PublishedAt</td>
+                    <td>@string.Join(", ", @e.Authors.Select(x => x.Name))</td>
                 </tr>
             }
         </tbody>

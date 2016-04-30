@@ -10,6 +10,7 @@ System.register(["./books.dialog", "./authors_choice_dialog", "./publishers_choi
             new Column({ name: "Price", isVisible: true }),
             new Column({ name: "NamePublisher", isVisible: true }),
             new Column({ name: "PublishedAt", isVisible: true }),
+            new Column({ name: "Authors", isVisible: true }),
         ];
         books_table = new Table("books_table", false, cols, $(window));
         var panel = $("#books_panel");

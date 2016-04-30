@@ -51,16 +51,46 @@ namespace Books.Controllers
             }
         }
 
-        // GET: /<controller>/
-        public IActionResult Index()
+        [HttpGet]
+        public IActionResult Index(int BookId, bool ajax = false)
         {
-            using (ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment))
+            List<Publisher> publishers = new List<Publisher>();
+            ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment);
+
+            if (BookId != 0)
+            {
+                var book = session.Get<Book>(BookId);
+                if (book == null)
+                {
+                    if (ajax) return Json(new { isOk = false, Errors = "It seems like there is no book with Id=" + BookId, view = RenderPartialViewToString("_Table", new List<Publisher>()) });
+                    else return View(new List<Publisher>());
+                }
+                else if (book.publisher == null)
+                {
+                    if (ajax) return Json(new { isOk = true, Errors = "No publishers whre found by given book Id", view = RenderPartialViewToString("_Table", new List<Publisher>()) });
+                    else return View(new List<Publisher>());
+
+                }
+                else
+                {
+                    publishers = new List<Publisher>();
+                    publishers.Add(book.publisher);
+                }
+
+            }
+            else
+                publishers = session.Query<Publisher>().ToList();
+
+            if (ajax)
+                return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("_Table", publishers) });
+            else
             {
                 ViewData["title"] = "Publishers";
-                return View(session.Query<Publisher>().ToList());
+                return View(publishers);
             }
 
         }
+
 
         [HttpPost]
         public ActionResult Create(string name)

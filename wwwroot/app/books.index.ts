@@ -15,6 +15,7 @@ function InitBooksTable() {
         new Column({ name: "Price", isVisible: true }),
         new Column({ name: "NamePublisher", isVisible: true }),
         new Column({ name: "PublishedAt", isVisible: true }),
+        new Column({ name: "Authors", isVisible: true }),
     ];
 
     books_table = new Table("books_table", false, cols, $(window));

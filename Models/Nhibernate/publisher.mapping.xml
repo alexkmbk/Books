@@ -8,6 +8,7 @@ assembly="Books" namespace="Books.Models">
       <generator class="sequence"/>
     </id>
     <property name="Name" />
+
   </class>
   
 </hibernate-mapping>

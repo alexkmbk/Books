@@ -51,16 +51,36 @@ namespace Books.Controllers
             }
         }
 
-        // GET: /<controller>/
-        public IActionResult Index()
+        [HttpGet]
+        public IActionResult Index(int BookId, bool ajax = false)
         {
-            using (ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment))
+            List<Author> authors = new List<Author>();
+            ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment);
+
+            if (BookId != 0)
+            {
+                var book = session.Get<Book>(BookId);
+                if (book == null)
+                {
+                    if (ajax) return Json(new { isOk = false, Errors = "It seems like there is no book with Id=" + BookId, view = RenderPartialViewToString("_Table", new List<Publisher>()) });
+                    else return View(new List<Author>());
+                }
+
+                authors = book.Authors.ToList();
+            }
+            else
+                authors = session.Query<Author>().ToList();
+
+            if (ajax)
+                return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("_Table", authors) });
+            else
             {
                 ViewData["title"] = "Authors";
-                return View(session.Query<Author>().ToList());
+                return View(authors);
             }
 
         }
+
 
         [HttpPost]
         public ActionResult Create(string name)
