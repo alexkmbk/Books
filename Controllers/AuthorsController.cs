@@ -12,7 +12,7 @@ using System.IO;
 using Microsoft.AspNet.Mvc.ViewEngines;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.AspNet.Mvc.ViewFeatures;
-
+using Books.Models.Repository.NHibernate;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -20,11 +20,21 @@ namespace Books.Controllers
 {
     public class AuthorsController : Controller
     {
-        private readonly IApplicationEnvironment _appEnvironment;
+
+        private BookRepository bookRep;
+        private AuthorRepository authorRep;
+        private PublisherRepository publisherRep;
+        private BooksToAuthorsRepository booksToAuthorsRep;
+        private BookShopSession bookShopSession;
 
         public AuthorsController(IApplicationEnvironment appEnvironment)
         {
-            _appEnvironment = appEnvironment;
+            bookRep = new BookRepository(appEnvironment);
+            authorRep = new AuthorRepository(appEnvironment);
+            publisherRep = new PublisherRepository(appEnvironment);
+            booksToAuthorsRep = new BooksToAuthorsRepository(appEnvironment);
+            bookShopSession = OpenNHibSession.OpenSession(appEnvironment);
+
         }
 
         // Функция для формирования html кода по переданному шаблону вида и модели
@@ -54,22 +64,26 @@ namespace Books.Controllers
         [HttpGet]
         public IActionResult Index(int BookId, bool ajax = false)
         {
+
             List<Author> authors = new List<Author>();
-            ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment);
+
+            var transaction = bookShopSession.BeginTransaction();
 
             if (BookId != 0)
             {
-                var book = session.Get<Book>(BookId);
+                var book = bookRep.GetBook(BookId);
                 if (book == null)
                 {
                     if (ajax) return Json(new { isOk = false, Errors = "It seems like there is no book with Id=" + BookId, view = RenderPartialViewToString("_Table", new List<Publisher>()) });
                     else return View(new List<Author>());
                 }
 
-                authors = book.Authors.ToList();
+                authors = authorRep.GetAuthors(book).ToList();
             }
             else
-                authors = session.Query<Author>().ToList();
+                authors = authorRep.GetAuthors().ToList();
+
+            transaction.Commit();
 
             if (ajax)
                 return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("_Table", authors) });
@@ -78,25 +92,16 @@ namespace Books.Controllers
                 ViewData["title"] = "Authors";
                 return View(authors);
             }
-
         }
-
 
         [HttpPost]
         public ActionResult Create(string name)
         {
             try
             {
-                using (ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment))
-                {
-                    using (ITransaction transaction = session.BeginTransaction())
-                    {
-                        Author author = new Author();
-                        author.Name = name;
-                        session.Save(author);
-                        transaction.Commit();
-                    }
-                }
+                    Author author = new Author();
+                    author.Name = name;
+                    authorRep.Create(author);
 
                 return Json(new { isOk = true, Errors = "" });
             }
@@ -104,6 +109,7 @@ namespace Books.Controllers
             {
                 return Json(new { isOk = false, Errors = exc.Message });
             }
+
         }
 
         [HttpPost]
@@ -111,19 +117,12 @@ namespace Books.Controllers
         {
             try
             {
-                using (ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment))
-                {
-                    using (ITransaction transaction = session.BeginTransaction())
-                    {
                         Author author = new Author();
                         author.Name = name;
                         author.Id = id;
-                        session.Update(author);
-                        transaction.Commit();
-                    }
-                }
+                        authorRep.Update(author);
 
-                return Json(new { isOk = true, Errors = "" });
+                 return Json(new { isOk = true, Errors = "" });
             }
             catch (Exception exc)
             {
@@ -136,17 +135,7 @@ namespace Books.Controllers
         {
             try
             {
-                using (ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment))
-                {
-                    using (ITransaction transaction = session.BeginTransaction())
-                    {
-                        Author author = new Author();
-                        author.Id = id;
-                        session.Delete(author);
-                        transaction.Commit();
-                    }
-                }
-
+                authorRep.Delete(id);
                 return Json(new { isOk = true, Errors = "" });
             }
             catch (Exception exc)
@@ -155,21 +144,13 @@ namespace Books.Controllers
             }
         }
 
-
         [HttpGet]
         public ActionResult GetAutocompleteAuthorsList(string term)
         {
             try
             {
- 
-                using (ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment))
-                {
-                    var authors = session.Query<Author>().Where(x => x.Name.ToLower().Contains(term.ToLower()))
-                        .OrderBy(x => x.Name)
-                        .Select(x => new { label = x.Name, value = x.Name, Id = x.Id }).ToList();
-
-                    return Json(authors);
-                }
+                var authors = authorRep.GetAutocompleteList(term);
+                return Json(authors);
             }
             catch (Exception exc)
             {
@@ -177,16 +158,12 @@ namespace Books.Controllers
             }
         }
 
-
         // Форма выбора авторов
         [HttpGet]
         public IActionResult GetChoiceForm()
         {
-            using (ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment))
-            {
-                ViewData["title"] = "Authors";
-                return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("ChoiceForm", session.Query<Author>()) });
-            }
+            ViewData["title"] = "Authors";
+            return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("ChoiceForm", authorRep.GetAuthors()) });
         }
 
     }

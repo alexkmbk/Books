@@ -10,7 +10,7 @@ function InitPublishersTable() {
     var cols = [new Column({ name: "Id", isVisible: false }),
         new Column({ name: "Name", isVisible: true })];
 
-    var publishers_table = new Table("publishers_table", true, cols, $(window), cols[0]);
+    publishers_table = new Table("publishers_table", true, cols, $(window), cols[0]);
 
     var panel = $("#publishers_panel");
     panel.find("input[name='AddButton']").get(0).onclick = publishers_table.Add;

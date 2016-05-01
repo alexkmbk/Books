@@ -4,7 +4,7 @@ System.register(["./books_choice_dialog"], function(exports_1) {
     function InitAuthorsTable() {
         var cols = [new Column({ name: "Id", isVisible: false }),
             new Column({ name: "Name", isVisible: true })];
-        var authors_table = new Table("authors_table", true, cols, $(window), cols[0]);
+        authors_table = new Table("authors_table", true, cols, $(window), cols[0]);
         var panel = $("#authors_panel");
         panel.find("input[name='AddButton']").get(0).onclick = authors_table.Add;
         panel.find("input[name='EditButton']").get(0).onclick = authors_table.Edit;

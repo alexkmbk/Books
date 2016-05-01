@@ -12,7 +12,7 @@ using System.IO;
 using Microsoft.AspNet.Mvc.ViewEngines;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.AspNet.Mvc.ViewFeatures;
-
+using Books.Models.Repository.NHibernate;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -20,11 +20,21 @@ namespace Books.Controllers
 {
     public class PublishersController : Controller
     {
-        private readonly IApplicationEnvironment _appEnvironment;
+
+        private BookRepository bookRep;
+        private AuthorRepository authorRep;
+        private PublisherRepository publisherRep;
+        private BooksToAuthorsRepository booksToAuthorsRep;
+        private BookShopSession bookShopSession;
 
         public PublishersController(IApplicationEnvironment appEnvironment)
         {
-            _appEnvironment = appEnvironment;
+            bookRep = new BookRepository(appEnvironment);
+            authorRep = new AuthorRepository(appEnvironment);
+            publisherRep = new PublisherRepository(appEnvironment);
+            booksToAuthorsRep = new BooksToAuthorsRepository(appEnvironment);
+            bookShopSession = OpenNHibSession.OpenSession(appEnvironment);
+
         }
 
         // Функция для формирования html кода по переданному шаблону вида и модели
@@ -55,11 +65,10 @@ namespace Books.Controllers
         public IActionResult Index(int BookId, bool ajax = false)
         {
             List<Publisher> publishers = new List<Publisher>();
-            ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment);
 
             if (BookId != 0)
             {
-                var book = session.Get<Book>(BookId);
+                var book = bookRep.GetBook(BookId);
                 if (book == null)
                 {
                     if (ajax) return Json(new { isOk = false, Errors = "It seems like there is no book with Id=" + BookId, view = RenderPartialViewToString("_Table", new List<Publisher>()) });
@@ -79,7 +88,7 @@ namespace Books.Controllers
 
             }
             else
-                publishers = session.Query<Publisher>().ToList();
+                publishers = publisherRep.GetPublishers().ToList();
 
             if (ajax)
                 return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("_Table", publishers) });
@@ -91,22 +100,14 @@ namespace Books.Controllers
 
         }
 
-
         [HttpPost]
         public ActionResult Create(string name)
         {
             try
             {
-                using (ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment))
-                {
-                    using (ITransaction transaction = session.BeginTransaction())
-                    {
-                        Publisher publisher = new Publisher();
-                        publisher.Name = name;
-                        session.Save(publisher);
-                        transaction.Commit();
-                    }
-                }
+                Publisher publisher = new Publisher();
+                publisher.Name = name;
+                publisherRep.Create(publisher);
 
                 return Json(new { isOk = true, Errors = "" });
             }
@@ -121,18 +122,10 @@ namespace Books.Controllers
         {
             try
             {
-                using (ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment))
-                {
-                    using (ITransaction transaction = session.BeginTransaction())
-                    {
-                        Publisher publisher = new Publisher();
-                        publisher.Name = name;
-                        publisher.Id = id;
-                        session.Update(publisher);
-                        transaction.Commit();
-                    }
-                }
-
+                Publisher publisher = new Publisher();
+                publisher.Name = name;
+                publisher.Id = id;
+                publisherRep.Update(publisher);
                 return Json(new { isOk = true, Errors = "" });
             }
             catch (Exception exc)
@@ -146,17 +139,7 @@ namespace Books.Controllers
         {
             try
             {
-                using (ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment))
-                {
-                    using (ITransaction transaction = session.BeginTransaction())
-                    {
-                        Publisher publisher = new Publisher();
-                        publisher.Id = id;
-                        session.Delete(publisher);
-                        transaction.Commit();
-                    }
-                }
-
+                publisherRep.Delete(id);
                 return Json(new { isOk = true, Errors = "" });
             }
             catch (Exception exc)
@@ -170,15 +153,9 @@ namespace Books.Controllers
         {
             try
             {
+                var publishers = publisherRep.GetAutocompletePublishersList(term);
 
-                using (ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment))
-                {
-                    var publishers = session.Query<Publisher>().Where(x => x.Name.ToLower().Contains(term.ToLower()))
-                        .OrderBy(x => x.Name)
-                        .Select(x => new { label = x.Name, value = x.Name, Id = x.Id }).ToList();
-
-                    return Json(publishers);
-                }
+                return Json(publishers);
             }
             catch (Exception exc)
             {
@@ -191,13 +168,9 @@ namespace Books.Controllers
         {
             try
             {
-                using (ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment))
-                {
-                    var publisher = session.Get<Publisher>(Id);
-                    if (publisher == null) return Json(new { isOk = false, Errors = "The author was not found by given Id." });
-                    return Json(new { name = publisher.Name });
-                }
-
+                var publisher = publisherRep.GetPublisher(Id);
+                if (publisher == null) return Json(new { isOk = false, Errors = "The author was not found by given Id." });
+                return Json(new { name = publisher.Name });
             }
             catch (Exception exc)
             {
@@ -209,13 +182,9 @@ namespace Books.Controllers
         [HttpGet]
         public IActionResult GetChoiceForm()
         {
-            using (ISession session = OpenNHibertnateSession.OpenSession(_appEnvironment))
-            {
-                ViewData["title"] = "Publishers";
-                return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("ChoiceForm", session.Query<Publisher>()) });
-            }
+            ViewData["title"] = "Publishers";
+            return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("ChoiceForm", publisherRep.GetPublishers()) });
         }
-
     }
 }
 
