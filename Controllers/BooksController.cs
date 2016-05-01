@@ -99,7 +99,7 @@ namespace Books.Controllers
                 bookRep.Create(book);
                 transaction.Commit();
 
-                return Json(new { isOk = true, Errors = "", Id = book.Id, view = RenderPartialViewToString("_Table", bookRep.GetBooks()) });
+                return Json(new { isOk = true, Errors = "", Id = book.Id, view = RenderPartialViewToString("_Table", bookRep.GetBooks().ToList()) });
             }
             catch (Exception exc)
             {
@@ -181,6 +181,22 @@ namespace Books.Controllers
                 return Json(new { isOk = false, Errors = exc.Message });
             }
         }
+
+        [HttpPost]
+        public ActionResult DeleteAuthorFromBook(int AuthorId, int BookId)
+        {
+            try
+            {
+                booksToAuthorsRep.Delete(BookId, AuthorId);
+
+                return Json(new { isOk = true, Errors = "" });
+            }
+            catch (Exception exc)
+            {
+                return Json(new { isOk = false, Errors = exc.Message });
+            }
+        }
+        
 
         // Возвращает диалог редактирования книги
         [HttpGet]

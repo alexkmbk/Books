@@ -41,7 +41,7 @@ System.register(["./authors_choice_dialog", "./publishers_choice_dialog"], funct
             $.ajax({
                 type: 'POST',
                 url: 'Books/DeleteAuthorFromBook',
-                data: { BookId: rowdata['BookId'], AuthorId: rowdata['AuthorId'] },
+                data: { BookId: bookId, AuthorId: rowdata['Id'] },
                 success: function (data) {
                     if (data["isOk"]) {
                         authors_table.Delete(); // удалить строку в диалоге
@@ -102,10 +102,10 @@ System.register(["./authors_choice_dialog", "./publishers_choice_dialog"], funct
         if (_Id === void 0) { _Id = null; }
         parentForm = _parentForm;
         // Удалим ранее созданный диалог, чтобы очистить все свойства
-        //if (dlg != undefined && dlg.hasClass('ui-dialog-content')) {
-        //    dlg.dialog('destroy').remove();
-        //dlg.find("input[type='text']").val("");
-        //}
+        if ($('div[aria-describedby="dialog_book"]').length > 0) {
+            alert("return");
+            return;
+        }
         $.ajax({
             type: 'GET',
             url: 'Books/GetDialog',

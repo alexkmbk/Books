@@ -19,16 +19,20 @@ namespace Books.Models.Repository.NHibernate
 
         public void Create(BooksToAuthors booksToAuthors)
         {
-             session.Save(booksToAuthors);             
+            var transaction = session.BeginTransaction();
+            session.Save(booksToAuthors);
+            transaction.Commit();
         }
 
-        public void Delete(int bookId)
+        public void Delete(int bookId, int AuthorId)
         {
-            var booksToAuthors = session.Query<BooksToAuthors>().Where(x => x.IdBook == bookId).ToList();
+            var transaction = session.BeginTransaction();
+            var booksToAuthors = session.Query<BooksToAuthors>().Where(x => x.IdBook == bookId && x.IdAuthor == AuthorId).ToList();
             foreach(var e in booksToAuthors)
             {
                 session.Delete(e);
             }
+            transaction.Commit();
         }
 
         public void Dispose()

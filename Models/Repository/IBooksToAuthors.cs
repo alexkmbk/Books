@@ -10,6 +10,6 @@ namespace Books.Models.Repository
         IEnumerable<Author> GetAuthors(int bookId);
         void Create(BooksToAuthors booksToAuthors);
         void Update(BooksToAuthors booksToAuthors);
-        void Delete(int id);
+        void Delete(int bookId, int AuthorId);
     }
 }

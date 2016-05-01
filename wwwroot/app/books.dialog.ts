@@ -59,7 +59,7 @@ function InitDialog() {
         $.ajax({
             type: 'POST',
             url: 'Books/DeleteAuthorFromBook',
-            data: { BookId: rowdata['BookId'], AuthorId: rowdata['AuthorId']},
+            data: { BookId: bookId, AuthorId: rowdata['Id'] },
             success: function (data) {
                 if (data["isOk"]) {
                     authors_table.Delete(); // удалить строку в диалоге
@@ -131,10 +131,12 @@ export function OpenEditDialog(_isNew: boolean, _Id = null, _parentForm: Window)
     parentForm = _parentForm;
 
     // Удалим ранее созданный диалог, чтобы очистить все свойства
-    //if (dlg != undefined && dlg.hasClass('ui-dialog-content')) {
+    if ($('div[aria-describedby="dialog_book"]').length>0) {
+        alert("return");
+        return;
     //    dlg.dialog('destroy').remove();
         //dlg.find("input[type='text']").val("");
-    //}
+    }
 
     $.ajax({
         type: 'GET',

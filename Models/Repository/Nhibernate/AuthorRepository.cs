@@ -19,14 +19,18 @@ namespace Books.Models.Repository.NHibernate
 
         public void Create(Author author)
         {
-             session.Save(author);             
+            var transaction = session.BeginTransaction();
+            session.Save(author);
+            transaction.Commit();
         }
 
         public void Delete(int id)
         {
+            var transaction = session.BeginTransaction();
             Author author = new Author();
             author.Id = id;
             session.Delete(author);
+            transaction.Commit();
         }
 
         public void Dispose()
