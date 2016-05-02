@@ -12,9 +12,9 @@ namespace Books.Models.Repository.NHibernate
     {
         private ISession session;
 
-        public AuthorRepository(IApplicationEnvironment appEnvironment)
+        public AuthorRepository(ISession _session)
         {
-            session = OpenNHibSession.OpenSession(appEnvironment).nHibernateSession;
+            session = _session;
         }
 
         public void Create(Author author)
@@ -27,8 +27,7 @@ namespace Books.Models.Repository.NHibernate
         public void Delete(int id)
         {
             var transaction = session.BeginTransaction();
-            Author author = new Author();
-            author.Id = id;
+            Author author = session.Get<Author>(id);
             session.Delete(author);
             transaction.Commit();
         }
@@ -64,6 +63,5 @@ namespace Books.Models.Repository.NHibernate
                         .OrderBy(x => x.Name)
                         .Select(x => new AutocompleteItem { label = x.Name, value = x.Name, Id = x.Id }).ToList();
         }
-
     }
 }

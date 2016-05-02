@@ -10,7 +10,7 @@ namespace Books.Models.Repository
         void Commit();
     }
 
-    public interface IBookShopSession
+    public interface IBookShopUnitOfWork
     {
        IBookShopTransaction BeginTransaction();
     }

@@ -20,20 +20,11 @@ namespace Books.Controllers
 {
     public class BooksController : Controller
     {
-        private BookRepository bookRep;
-        private AuthorRepository authorRep;
-        private PublisherRepository publisherRep;
-        private BooksToAuthorsRepository booksToAuthorsRep;
-        private BookShopSession bookShopSession;
+        private BookShopUnitOfWork unitOfWork;
 
         public BooksController(IApplicationEnvironment appEnvironment)
         {
-            bookRep = new BookRepository(appEnvironment);
-            authorRep = new AuthorRepository(appEnvironment);
-            publisherRep = new PublisherRepository(appEnvironment);
-            booksToAuthorsRep = new BooksToAuthorsRepository(appEnvironment);
-            bookShopSession = OpenNHibSession.OpenSession(appEnvironment);
-            
+            unitOfWork = new BookShopUnitOfWork(appEnvironment);  
         }
 
         // Функция для формирования html кода по переданному шаблону вида и модели
@@ -63,7 +54,7 @@ namespace Books.Controllers
         // GET: /<controller>/
         public IActionResult Index(int AuthorId, int PublisherId, bool ajax = false)
         {
-            List<Book> books = bookRep.GetBooks(AuthorId, PublisherId).ToList();
+            List<Book> books = unitOfWork.BookRep.GetBooks(AuthorId, PublisherId).ToList();
  
             if (ajax)
                 return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("_Table", books) });
@@ -81,7 +72,7 @@ namespace Books.Controllers
             Book book = new Book();
             try
             {
-                var transaction = bookShopSession.BeginTransaction();
+                var transaction = unitOfWork.BeginTransaction();
 
                 book.Name = name;
                 book.Description = description;
@@ -89,17 +80,17 @@ namespace Books.Controllers
                 book.PublishedAt = publishedAt;
                 if (PublisherId != 0)
                 {
-                    var publisher = publisherRep.GetPublisher(PublisherId);
+                    var publisher = unitOfWork.PublisherRep.GetPublisher(PublisherId);
                     if (publisher == null) return Json(new { isOk = false, Errors = "The publisher was not found by given Id." });
 
                     book.publisher = publisher;
                 }
 
 
-                bookRep.Create(book);
+                unitOfWork.BookRep.Create(book);
                 transaction.Commit();
 
-                return Json(new { isOk = true, Errors = "", Id = book.Id, view = RenderPartialViewToString("_Table", bookRep.GetBooks().ToList()) });
+                return Json(new { isOk = true, Errors = "", Id = book.Id, view = RenderPartialViewToString("_Table", unitOfWork.BookRep.GetBooks().ToList()) });
             }
             catch (Exception exc)
             {
@@ -112,9 +103,9 @@ namespace Books.Controllers
         {
             try
             {
-                var transaction = bookShopSession.BeginTransaction();
+                var transaction = unitOfWork.BeginTransaction();
 
-                Book book = bookRep.GetBook(BookId);
+                Book book = unitOfWork.BookRep.GetBook(BookId);
                 if (book == null) return Json(new { isOk = false, Errors = "The book was not found by given Id." });
                 book.Name = Name;
                 book.Description = Description;
@@ -122,15 +113,15 @@ namespace Books.Controllers
                 book.PublishedAt = PublishedAt;
                 if (PublisherId != 0)
                 {
-                    var publisher = publisherRep.GetPublisher(PublisherId);
+                    var publisher = unitOfWork.PublisherRep.GetPublisher(PublisherId);
                     if (publisher == null) return Json(new { isOk = false, Errors = "The publisher was not found by given Id." });
 
                     book.publisher = publisher;
                 }
 
-                bookRep.Update(book);
+                unitOfWork.BookRep.Update(book);
                 transaction.Commit();
-                return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("_Table", bookRep.GetBooks()) });
+                return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("_Table", unitOfWork.BookRep.GetBooks()) });
 
             }
             catch (Exception exc)
@@ -144,7 +135,7 @@ namespace Books.Controllers
         {
             try
             {
-                bookRep.Delete(id);
+                unitOfWork.BookRep.Delete(id);
                 return Json(new { isOk = true, Errors = "" });
             }
             catch (Exception exc)
@@ -159,7 +150,7 @@ namespace Books.Controllers
                 ViewBag.Title = "Authors";
                 ViewBag.BookId = bookId;
 
-                var authors = booksToAuthorsRep.GetAuthors(bookId);
+                var authors = unitOfWork.BooksToAuthorsRep.GetAuthors(bookId);
 
                 return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("_AuthorsTable", authors) });
         }
@@ -172,7 +163,7 @@ namespace Books.Controllers
                 BooksToAuthors booksToAuthors = new BooksToAuthors();
                 booksToAuthors.IdAuthor = AuthorId;
                 booksToAuthors.IdBook = BookId;
-                booksToAuthorsRep.Create(booksToAuthors);
+                unitOfWork.BooksToAuthorsRep.Create(booksToAuthors);
 
                 return Json(new { isOk = true, Errors = "" });
             }
@@ -187,7 +178,7 @@ namespace Books.Controllers
         {
             try
             {
-                booksToAuthorsRep.Delete(BookId, AuthorId);
+                unitOfWork.BooksToAuthorsRep.Delete(BookId, AuthorId);
 
                 return Json(new { isOk = true, Errors = "" });
             }
@@ -207,10 +198,10 @@ namespace Books.Controllers
                 int? publisherId = 0;
                 string title = "";
 
-                Book book = bookRep.GetBook(Id);
+                Book book = unitOfWork.BookRep.GetBook(Id);
                 if (book != null)
                 {
-                    var publisher = publisherRep.GetPublisher(book.publisher.Id);
+                    var publisher = unitOfWork.PublisherRep.GetPublisher(book.publisher.Id);
                     if (publisher != null)
                     {
                         publisherName = publisher.Name;
@@ -235,7 +226,7 @@ namespace Books.Controllers
             try
             {
 
-                return Json(bookRep.GetAutocompleteList(term));
+                return Json(unitOfWork.BookRep.GetAutocompleteList(term));
 
             }
             catch (Exception exc)
@@ -249,7 +240,7 @@ namespace Books.Controllers
         public IActionResult GetChoiceForm()
         {
             ViewData["title"] = "Books";
-            return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("ChoiceForm", bookRep.GetBooks()) });
+            return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("ChoiceForm", unitOfWork.BookRep.GetBooks()) });
 
         }
 

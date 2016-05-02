@@ -323,7 +323,6 @@ var Table = (function () {
         // двойной клик по ячейке таблицы, проиходсит вход в режим редактирования
         this.DblClickOnRow = function (e) {
             e.preventDefault();
-            alert("DblClickOnRow");
             _this.Edit();
         };
         this.name = name;

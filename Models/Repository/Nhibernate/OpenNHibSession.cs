@@ -10,42 +10,11 @@ using System.Web;
 
 namespace Books.Models.Repository.NHibernate
 {
-    public class Transaction : IBookShopTransaction
-    {
-        ITransaction transaction;
-
-        public Transaction(ITransaction _transaction)
-        {
-            transaction = _transaction;
-        }
-
-        public void Commit()
-        {
-            transaction.Commit();
-        }
-    }
-
-    public class BookShopSession : IBookShopSession
-    {
-        public ISession nHibernateSession;
-        public BookShopSession(ISession _session)
-        {
-            nHibernateSession = _session;
-        }
-
-        public IBookShopTransaction BeginTransaction()
-        {
-            Transaction transaction = new Transaction(nHibernateSession.BeginTransaction());
-            return transaction;
-        }
-
-    }
-
     public class OpenNHibSession
     {
        public static ISessionFactory sessionFactory;
 
-        public static BookShopSession OpenSession(IApplicationEnvironment _appEnvironment)
+        public static ISession OpenSession(IApplicationEnvironment _appEnvironment)
         {
             if (sessionFactory == null)
             {
@@ -59,8 +28,7 @@ namespace Books.Models.Repository.NHibernate
 
                 sessionFactory = configuration.BuildSessionFactory();
             }
-            BookShopSession session = new BookShopSession(sessionFactory.OpenSession());
-            return session;
+            return sessionFactory.OpenSession();
         }
     }
 }

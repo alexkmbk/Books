@@ -12,9 +12,9 @@ namespace Books.Models.Repository.NHibernate
     {
         private ISession session;
 
-        public BookRepository(IApplicationEnvironment appEnvironment)
+        public BookRepository(ISession _session)
         {
-            session = OpenNHibSession.OpenSession(appEnvironment).nHibernateSession;
+            session = _session;
         }
 
         public void Create(Book book)

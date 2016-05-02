@@ -21,20 +21,11 @@ namespace Books.Controllers
     public class AuthorsController : Controller
     {
 
-        private BookRepository bookRep;
-        private AuthorRepository authorRep;
-        private PublisherRepository publisherRep;
-        private BooksToAuthorsRepository booksToAuthorsRep;
-        private BookShopSession bookShopSession;
+        private BookShopUnitOfWork unitOfWork;
 
         public AuthorsController(IApplicationEnvironment appEnvironment)
         {
-            bookRep = new BookRepository(appEnvironment);
-            authorRep = new AuthorRepository(appEnvironment);
-            publisherRep = new PublisherRepository(appEnvironment);
-            booksToAuthorsRep = new BooksToAuthorsRepository(appEnvironment);
-            bookShopSession = OpenNHibSession.OpenSession(appEnvironment);
-
+            unitOfWork = new BookShopUnitOfWork(appEnvironment);
         }
 
         // Функция для формирования html кода по переданному шаблону вида и модели
@@ -67,21 +58,21 @@ namespace Books.Controllers
 
             List<Author> authors = new List<Author>();
 
-            var transaction = bookShopSession.BeginTransaction();
+            var transaction = unitOfWork.BeginTransaction();
 
             if (BookId != 0)
             {
-                var book = bookRep.GetBook(BookId);
+                var book = unitOfWork.BookRep.GetBook(BookId);
                 if (book == null)
                 {
                     if (ajax) return Json(new { isOk = false, Errors = "It seems like there is no book with Id=" + BookId, view = RenderPartialViewToString("_Table", new List<Publisher>()) });
                     else return View(new List<Author>());
                 }
 
-                authors = authorRep.GetAuthors(book).ToList();
+                authors = unitOfWork.AuthorRep.GetAuthors(book).ToList();
             }
             else
-                authors = authorRep.GetAuthors().ToList();
+                authors = unitOfWork.AuthorRep.GetAuthors().ToList();
 
             transaction.Commit();
 
@@ -101,9 +92,9 @@ namespace Books.Controllers
             {
                     Author author = new Author();
                     author.Name = name;
-                    authorRep.Create(author);
+                    unitOfWork.AuthorRep.Create(author);
 
-                return Json(new { isOk = true, Errors = "" });
+                return Json(new { isOk = true, Errors = "", Id = author.Id});
             }
             catch (Exception exc)
             {
@@ -120,7 +111,7 @@ namespace Books.Controllers
                         Author author = new Author();
                         author.Name = name;
                         author.Id = id;
-                        authorRep.Update(author);
+                        unitOfWork.AuthorRep.Update(author);
 
                  return Json(new { isOk = true, Errors = "" });
             }
@@ -135,7 +126,7 @@ namespace Books.Controllers
         {
             try
             {
-                authorRep.Delete(id);
+                unitOfWork.AuthorRep.Delete(id);
                 return Json(new { isOk = true, Errors = "" });
             }
             catch (Exception exc)
@@ -149,7 +140,7 @@ namespace Books.Controllers
         {
             try
             {
-                var authors = authorRep.GetAutocompleteList(term);
+                var authors = unitOfWork.AuthorRep.GetAutocompleteList(term);
                 return Json(authors);
             }
             catch (Exception exc)
@@ -163,7 +154,7 @@ namespace Books.Controllers
         public IActionResult GetChoiceForm()
         {
             ViewData["title"] = "Authors";
-            return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("ChoiceForm", authorRep.GetAuthors()) });
+            return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("ChoiceForm", unitOfWork.AuthorRep.GetAuthors()) });
         }
 
     }

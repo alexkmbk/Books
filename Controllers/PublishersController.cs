@@ -21,20 +21,11 @@ namespace Books.Controllers
     public class PublishersController : Controller
     {
 
-        private BookRepository bookRep;
-        private AuthorRepository authorRep;
-        private PublisherRepository publisherRep;
-        private BooksToAuthorsRepository booksToAuthorsRep;
-        private BookShopSession bookShopSession;
+        private BookShopUnitOfWork unitOfWork;
 
         public PublishersController(IApplicationEnvironment appEnvironment)
         {
-            bookRep = new BookRepository(appEnvironment);
-            authorRep = new AuthorRepository(appEnvironment);
-            publisherRep = new PublisherRepository(appEnvironment);
-            booksToAuthorsRep = new BooksToAuthorsRepository(appEnvironment);
-            bookShopSession = OpenNHibSession.OpenSession(appEnvironment);
-
+            unitOfWork = new BookShopUnitOfWork(appEnvironment);
         }
 
         // Функция для формирования html кода по переданному шаблону вида и модели
@@ -68,7 +59,7 @@ namespace Books.Controllers
 
             if (BookId != 0)
             {
-                var book = bookRep.GetBook(BookId);
+                var book = unitOfWork.BookRep.GetBook(BookId);
                 if (book == null)
                 {
                     if (ajax) return Json(new { isOk = false, Errors = "It seems like there is no book with Id=" + BookId, view = RenderPartialViewToString("_Table", new List<Publisher>()) });
@@ -88,7 +79,7 @@ namespace Books.Controllers
 
             }
             else
-                publishers = publisherRep.GetPublishers().ToList();
+                publishers = unitOfWork.PublisherRep.GetPublishers().ToList();
 
             if (ajax)
                 return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("_Table", publishers) });
@@ -107,9 +98,9 @@ namespace Books.Controllers
             {
                 Publisher publisher = new Publisher();
                 publisher.Name = name;
-                publisherRep.Create(publisher);
+                unitOfWork.PublisherRep.Create(publisher);
 
-                return Json(new { isOk = true, Errors = "" });
+                return Json(new { isOk = true, Errors = "", Id = publisher.Id});
             }
             catch (Exception exc)
             {
@@ -125,7 +116,7 @@ namespace Books.Controllers
                 Publisher publisher = new Publisher();
                 publisher.Name = name;
                 publisher.Id = id;
-                publisherRep.Update(publisher);
+                unitOfWork.PublisherRep.Update(publisher);
                 return Json(new { isOk = true, Errors = "" });
             }
             catch (Exception exc)
@@ -139,7 +130,7 @@ namespace Books.Controllers
         {
             try
             {
-                publisherRep.Delete(id);
+                unitOfWork.PublisherRep.Delete(id);
                 return Json(new { isOk = true, Errors = "" });
             }
             catch (Exception exc)
@@ -153,7 +144,7 @@ namespace Books.Controllers
         {
             try
             {
-                var publishers = publisherRep.GetAutocompletePublishersList(term);
+                var publishers = unitOfWork.PublisherRep.GetAutocompletePublishersList(term);
 
                 return Json(publishers);
             }
@@ -168,7 +159,7 @@ namespace Books.Controllers
         {
             try
             {
-                var publisher = publisherRep.GetPublisher(Id);
+                var publisher = unitOfWork.PublisherRep.GetPublisher(Id);
                 if (publisher == null) return Json(new { isOk = false, Errors = "The author was not found by given Id." });
                 return Json(new { name = publisher.Name });
             }
@@ -183,7 +174,7 @@ namespace Books.Controllers
         public IActionResult GetChoiceForm()
         {
             ViewData["title"] = "Publishers";
-            return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("ChoiceForm", publisherRep.GetPublishers()) });
+            return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("ChoiceForm", unitOfWork.PublisherRep.GetPublishers()) });
         }
     }
 }
