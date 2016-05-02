@@ -35,7 +35,7 @@ function InitPublishersTable() {
         });
     }
 
-    SetRefInput("BookName", "BookId", panel.find("div[name = 'Book']"), "Books/GetAutocompleteList", true, filter);
+    SetRefInput("BookName", "BookId", panel.find("div[name = 'Book']"), "Books/GetAutocompleteList", true, filter, true);
 
     panel.find("div[name = 'Book']").get(0).addEventListener("BookName_ChoiceFormClick", function (e: any) {
         BooksChoiceDialog.OpenBooksChoiceDialog(panel.find("div[name = 'dialog_books_choice']"), function (rowData: any) {

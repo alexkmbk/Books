@@ -26,7 +26,7 @@ System.register(["./books_choice_dialog"], function(exports_1) {
                 }
             });
         }
-        SetRefInput("BookName", "BookId", panel.find("div[name = 'Book']"), "Books/GetAutocompleteList", true, filter);
+        SetRefInput("BookName", "BookId", panel.find("div[name = 'Book']"), "Books/GetAutocompleteList", true, filter, true);
         panel.find("div[name = 'Book']").get(0).addEventListener("BookName_ChoiceFormClick", function (e) {
             BooksChoiceDialog.OpenBooksChoiceDialog(panel.find("div[name = 'dialog_books_choice']"), function (rowData) {
                 panel.find("input[name = 'BookName']").val(rowData["Name"]);

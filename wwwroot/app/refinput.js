@@ -1,7 +1,7 @@
 // Функция, предназначена для инициализации механизма ввода ссылочных значений в полях ввода, когда с помощью автокомплита или окна выбора, необходимо
 // выбрать значений из таблицы.
 //
-function SetRefInput(valueInputName, idInputName, container, autoCompleteSource, isChoiceForm, ChangeValueHandler) {
+function SetRefInput(valueInputName, idInputName, container, autoCompleteSource, isChoiceForm, ChangeValueHandler, isClearButton) {
     var valueInput = container.find("input[name = '" + valueInputName + "']");
     var idInput = container.find("input[name = '" + idInputName + "']");
     var choiceFormIsOpen = false;
@@ -51,5 +51,22 @@ function SetRefInput(valueInputName, idInputName, container, autoCompleteSource,
                 }
             }
         });
+        // clear button
+        if (isClearButton && (valueInput.parent().find(".ClearRefInputButton").length == 0)) {
+            var button = $(document.createElement('input'));
+            button.attr("type", "button");
+            button.val("X");
+            button.addClass("ClearRefInputButton");
+            var height = 25; //input.height();
+            button.width(height);
+            button.height(height);
+            button.on("click", function (e) {
+                valueInput.val("");
+                idInput.val("");
+                if (ChangeValueHandler)
+                    ChangeValueHandler();
+            });
+            valueInput.parent().append(button);
+        }
     }
 }

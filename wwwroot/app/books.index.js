@@ -35,7 +35,7 @@ System.register(["./books.dialog", "./authors_choice_dialog", "./publishers_choi
                 }
             });
         }
-        SetRefInput("AuthorName", "AuthorId", filterFields.find("div[name = 'Author']"), "Authors/GetAutocompleteAuthorsList", true, filter);
+        SetRefInput("AuthorName", "AuthorId", filterFields.find("div[name = 'Author']"), "Authors/GetAutocompleteAuthorsList", true, filter, true);
         filterFields.find("div[name = 'Author']").get(0).addEventListener("AuthorName_ChoiceFormClick", function (e) {
             AuthorsChoiceDialog.OpenAuthorsChoiceDialog(panel.find("div[name = 'dialog_authors_choice']"), function (rowData) {
                 filterFields.find("input[name = 'AuthorName']").val(rowData["Name"]);
@@ -46,7 +46,7 @@ System.register(["./books.dialog", "./authors_choice_dialog", "./publishers_choi
             });
             return false;
         });
-        SetRefInput("PublisherName", "PublisherId", filterFields.find("div[name = 'Publisher']"), "Publishers/GetAutocompletePublishersList", true, filter);
+        SetRefInput("PublisherName", "PublisherId", filterFields.find("div[name = 'Publisher']"), "Publishers/GetAutocompletePublishersList", true, filter, true);
         filterFields.find("div[name = 'Publisher']").get(0).addEventListener("PublisherName_ChoiceFormClick", function (e) {
             PublishersChoiceDialog.OpenPublishersChoiceDialog(panel.find("div[name = 'dialog_publishers_choice']"), function (rowData) {
                 filterFields.find("input[name = 'PublisherName']").val(rowData["Name"]);
