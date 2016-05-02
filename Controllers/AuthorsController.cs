@@ -92,7 +92,9 @@ namespace Books.Controllers
             {
                     Author author = new Author();
                     author.Name = name;
+                    var transaction = unitOfWork.BeginTransaction();
                     unitOfWork.AuthorRep.Create(author);
+                    transaction.Commit();
 
                 return Json(new { isOk = true, Errors = "", Id = author.Id});
             }
@@ -108,12 +110,14 @@ namespace Books.Controllers
         {
             try
             {
-                        Author author = new Author();
-                        author.Name = name;
-                        author.Id = id;
-                        unitOfWork.AuthorRep.Update(author);
+                Author author = new Author();
+                author.Name = name;
+                author.Id = id;
+                var transaction = unitOfWork.BeginTransaction();
+                unitOfWork.AuthorRep.Update(author);
+                transaction.Commit();
 
-                 return Json(new { isOk = true, Errors = "" });
+                return Json(new { isOk = true, Errors = "" });
             }
             catch (Exception exc)
             {
@@ -126,7 +130,9 @@ namespace Books.Controllers
         {
             try
             {
+                var transaction = unitOfWork.BeginTransaction();
                 unitOfWork.AuthorRep.Delete(id);
+                transaction.Commit();
                 return Json(new { isOk = true, Errors = "" });
             }
             catch (Exception exc)

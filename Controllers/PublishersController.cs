@@ -98,7 +98,9 @@ namespace Books.Controllers
             {
                 Publisher publisher = new Publisher();
                 publisher.Name = name;
+                var transaction = unitOfWork.BeginTransaction();
                 unitOfWork.PublisherRep.Create(publisher);
+                transaction.Commit();
 
                 return Json(new { isOk = true, Errors = "", Id = publisher.Id});
             }
@@ -116,7 +118,9 @@ namespace Books.Controllers
                 Publisher publisher = new Publisher();
                 publisher.Name = name;
                 publisher.Id = id;
+                var transaction = unitOfWork.BeginTransaction();
                 unitOfWork.PublisherRep.Update(publisher);
+                transaction.Commit();
                 return Json(new { isOk = true, Errors = "" });
             }
             catch (Exception exc)
@@ -130,7 +134,9 @@ namespace Books.Controllers
         {
             try
             {
+                var transaction = unitOfWork.BeginTransaction();
                 unitOfWork.PublisherRep.Delete(id);
+                transaction.Commit();
                 return Json(new { isOk = true, Errors = "" });
             }
             catch (Exception exc)

@@ -55,7 +55,7 @@ namespace Books.Controllers
         public IActionResult Index(int AuthorId, int PublisherId, bool ajax = false)
         {
             List<Book> books = unitOfWork.BookRep.GetBooks(AuthorId, PublisherId).ToList();
- 
+
             if (ajax)
                 return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("_Table", books) });
             else
@@ -135,7 +135,9 @@ namespace Books.Controllers
         {
             try
             {
+                var transaction = unitOfWork.BeginTransaction();
                 unitOfWork.BookRep.Delete(id);
+                transaction.Commit();
                 return Json(new { isOk = true, Errors = "" });
             }
             catch (Exception exc)
@@ -163,7 +165,9 @@ namespace Books.Controllers
                 BooksToAuthors booksToAuthors = new BooksToAuthors();
                 booksToAuthors.IdAuthor = AuthorId;
                 booksToAuthors.IdBook = BookId;
+                var transaction = unitOfWork.BeginTransaction();
                 unitOfWork.BooksToAuthorsRep.Create(booksToAuthors);
+                transaction.Commit();
 
                 return Json(new { isOk = true, Errors = "" });
             }
@@ -178,7 +182,9 @@ namespace Books.Controllers
         {
             try
             {
+                var transaction = unitOfWork.BeginTransaction();
                 unitOfWork.BooksToAuthorsRep.Delete(BookId, AuthorId);
+                transaction.Commit();
 
                 return Json(new { isOk = true, Errors = "" });
             }
@@ -193,31 +199,28 @@ namespace Books.Controllers
         [HttpGet]
         public IActionResult GetDialog(int Id, bool isNew)
         {
-           
-                string publisherName = "";
-                int? publisherId = 0;
-                string title = "";
+            string publisherName = "";
+            int? publisherId = 0;
+            string title = "";
 
-                Book book = unitOfWork.BookRep.GetBook(Id);
-                if (book != null)
+            Book book = unitOfWork.BookRep.GetBook(Id);
+            if (book != null)
+            {
+                var publisher = unitOfWork.PublisherRep.GetPublisher(book.publisher.Id);
+                if (publisher != null)
                 {
-                    var publisher = unitOfWork.PublisherRep.GetPublisher(book.publisher.Id);
-                    if (publisher != null)
-                    {
-                        publisherName = publisher.Name;
-                        publisherId = publisher.Id;
-                    }
-                    if (isNew) title = "New book";
-                    else title = book.Name;
+                    publisherName = publisher.Name;
+                    publisherId = publisher.Id;
                 }
-                else book = new Book();
+                if (isNew) title = "New book";
+                else title = book.Name;
+            }
+            else book = new Book();
+            ViewData["PublisherName"] = publisherName;
+            ViewData["PublisherId"] = publisherId;
+            ViewData["Title"] = title;
 
-                ViewData["PublisherName"] = publisherName;
-                ViewData["PublisherId"] = publisherId;
-                ViewData["Title"] = title;
-                
-                return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("Dialog", book) });
-            
+            return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("Dialog", book) });
         }
 
         [HttpGet]

@@ -19,19 +19,14 @@ namespace Books.Models.Repository.NHibernate
 
         public void Create(BooksToAuthors booksToAuthors)
         {
-            var transaction = session.BeginTransaction();
             session.Save(booksToAuthors);
-            transaction.Commit();
         }
 
         public void Delete(int bookId, int AuthorId)
         {
-            var transaction = session.BeginTransaction();
             Book book = session.Get<Book>(bookId);
             Author author = session.Get<Author>(AuthorId);
             book.Authors.RemoveAt(book.Authors.IndexOf(author));
-
-            transaction.Commit();
         }
 
         public void Dispose()
