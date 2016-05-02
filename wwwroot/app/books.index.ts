@@ -120,6 +120,9 @@ window.addEventListener("books_table_BeforeDelete", function (e: any) {
 });
 
 window.addEventListener("books_table_AfterSave", function (e: any) {
-    if (books_table != undefined) books_table.removeEventListeners();
     InitBooksTable();
+});
+
+window.addEventListener("books_table_BeforeDataReceive", function (e: any) {
+    if (books_table != undefined) books_table.removeEventListeners();
 });

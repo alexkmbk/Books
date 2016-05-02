@@ -103,7 +103,6 @@ System.register(["./authors_choice_dialog", "./publishers_choice_dialog"], funct
         parentForm = _parentForm;
         // Удалим ранее созданный диалог, чтобы очистить все свойства
         if ($('div[aria-describedby="dialog_book"]').length > 0) {
-            alert("return");
             return;
         }
         $.ajax({
@@ -210,6 +209,8 @@ System.register(["./authors_choice_dialog", "./publishers_choice_dialog"], funct
             success: function (data) {
                 // Если запрос выполнен без ошибок то присваиваем полученный с сервера html код
                 if (data["isOk"]) {
+                    var event = new CustomEvent("books_table_BeforeDataReceive");
+                    parentForm.dispatchEvent(event);
                     if (close) {
                         if (dlg != undefined)
                             dlg.dialog('close');

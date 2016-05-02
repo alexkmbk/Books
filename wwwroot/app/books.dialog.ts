@@ -132,7 +132,6 @@ export function OpenEditDialog(_isNew: boolean, _Id = null, _parentForm: Window)
 
     // Удалим ранее созданный диалог, чтобы очистить все свойства
     if ($('div[aria-describedby="dialog_book"]').length>0) {
-        alert("return");
         return;
     //    dlg.dialog('destroy').remove();
         //dlg.find("input[type='text']").val("");
@@ -257,6 +256,10 @@ function SaveChanges(close: boolean = false) {
         success: function (data) {
             // Если запрос выполнен без ошибок то присваиваем полученный с сервера html код
             if (data["isOk"]) {
+
+                var event = new CustomEvent("books_table_BeforeDataReceive");
+                parentForm.dispatchEvent(event);
+
                 if (close) {
                     if (dlg != undefined) dlg.dialog('close');                
                     $('#books_table_div').html(data["view"]);

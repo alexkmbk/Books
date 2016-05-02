@@ -107,9 +107,11 @@ System.register(["./books.dialog", "./authors_choice_dialog", "./publishers_choi
                 });
             });
             window.addEventListener("books_table_AfterSave", function (e) {
+                InitBooksTable();
+            });
+            window.addEventListener("books_table_BeforeDataReceive", function (e) {
                 if (books_table != undefined)
                     books_table.removeEventListeners();
-                InitBooksTable();
             });
         }
     }

@@ -44,8 +44,10 @@ var Table = (function () {
             parent.off('keydown', _this.idSelector + '_input');
             parent.off('click', _this.idSelector + ' > tbody');
             parent.off('click', _this.idSelector + ' > tbody > tr');
-            parent.off('dblclick', _this.idSelector + ' > tbody > tr > td');
+            parent.off('dblclick');
             parent.off('keydown', '.tableinput');
+            // var event = new CustomEvent(this.name + "_Pick", { 'detail': rowData });
+            // this.parentForm.get(0).dispatchEvent(event);
         };
         this.BeforeDelete = function () {
             var rowData = new Array();
@@ -321,6 +323,7 @@ var Table = (function () {
         // двойной клик по ячейке таблицы, проиходсит вход в режим редактирования
         this.DblClickOnRow = function (e) {
             e.preventDefault();
+            alert("DblClickOnRow");
             _this.Edit();
         };
         this.name = name;

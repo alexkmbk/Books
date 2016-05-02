@@ -101,8 +101,11 @@ class Table {
         parent.off('keydown', this.idSelector + '_input');
         parent.off('click', this.idSelector + ' > tbody');
         parent.off('click', this.idSelector + ' > tbody > tr');
-        parent.off('dblclick', this.idSelector + ' > tbody > tr > td');
+        parent.off('dblclick');
         parent.off('keydown', '.tableinput');
+
+       // var event = new CustomEvent(this.name + "_Pick", { 'detail': rowData });
+       // this.parentForm.get(0).dispatchEvent(event);
     }
 
     public SetInputValue(ColName: string, value: any) {
@@ -137,6 +140,7 @@ class Table {
             this.obj.find(".tableinput").first().focus();
             return;
         }
+
         this.EditCell(null);
         this.dontEndEditing = true;
         return false;
@@ -148,6 +152,7 @@ class Table {
         var columns = this.columns;
         var isEditable = this.isEditable;
         var row: JQuery;
+
         if (_row == null)
             row = this.obj.find(' .highlight');
         else row = _row;
