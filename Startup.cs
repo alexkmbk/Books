@@ -43,7 +43,7 @@ namespace Books
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Books/Error");
             }
 
             app.UseIISPlatformHandler();

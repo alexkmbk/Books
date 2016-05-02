@@ -232,5 +232,9 @@ namespace Books.Controllers
 
         }
 
+        public IActionResult Error()
+        {
+            return View();
+        }
     }
 }
