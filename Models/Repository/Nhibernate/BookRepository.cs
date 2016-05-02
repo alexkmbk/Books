@@ -45,7 +45,7 @@ namespace Books.Models.Repository.NHibernate
                         .Select(x => new AutocompleteItem { label = x.Name, value = x.Name, Id = x.Id }).ToList();
         }
 
-        public Book GetBook(int id)
+        public Book GetBook(int? id)
         {
             return session.Get<Book>(id);
         }

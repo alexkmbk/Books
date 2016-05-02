@@ -264,7 +264,7 @@ function SaveChanges(close: boolean = false) {
                 else {
                     $('#books_table_div').html(data["view"]);
                     if (isNew) {
-                        bookId = data["BookId"];
+                        bookId = data["Id"];
                         SetDialogActive(dlg, data);
                     }
                 }

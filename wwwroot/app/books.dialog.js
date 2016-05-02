@@ -217,7 +217,7 @@ System.register(["./authors_choice_dialog", "./publishers_choice_dialog"], funct
                     else {
                         $('#books_table_div').html(data["view"]);
                         if (isNew) {
-                            bookId = data["BookId"];
+                            bookId = data["Id"];
                             SetDialogActive(dlg, data);
                         }
                     }
