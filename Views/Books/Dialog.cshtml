@@ -39,8 +39,16 @@
 
                 <tr>
                     <td>Published at:</td>
-                    <td><input type="text" name="PublishedAt" value="@Model.PublishedAt" /></td>
+                    @if (Model.PublishedAt == DateTime.MinValue)
+                    {
+                        <td><input type="text" name="PublishedAt" value="" /></td>
+                    }
+                    else
+                    {
+                           <td><input type="text" name="PublishedAt" value='@Model.PublishedAt.ToString("yyyy-MM-dd")' /></td>
+                    }
                 </tr>
+
             </table>
         </div>
 
