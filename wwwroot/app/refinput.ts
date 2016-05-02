@@ -30,7 +30,6 @@ function SetRefInput(valueInputName: string, idInputName: string, container: JQu
                 valueInput.parent().append(button);
             }
             if (autoCompleteSource) {
-                var idInput = idInput;
                 valueInput.autocomplete({
                     source: autoCompleteSource,
                     minLength: 1,
@@ -47,5 +46,13 @@ function SetRefInput(valueInputName: string, idInputName: string, container: JQu
                 });
                valueInput.autocomplete("widget").insertAfter(container);
             }
+            valueInput.on('keydown', function (e:any) {
+                if (e.keyCode == keyCodes.ENTER) {
+                    if (valueInput.val() == "") {
+                        idInput.val("");
+                        if (ChangeValueHandler) ChangeValueHandler();
+                    }
+                }
+            });
         }
     }

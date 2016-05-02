@@ -26,12 +26,18 @@
                 </tr>
                 <tr>
                     <td>Price:</td>
-                    <td><input type="text" name="Price" value="@Model.Price" /></td>
+                    @if (@Model.Price == 0)
+                    {
+                        <td><input type="text" name="Price" value="" pattern="[0-9]+(\.[0-9]+|,[0-9]+)?" required /></td>
+                    }
+                    else {
+                        <td><input type="text" name="Price" value="@Model.Price" pattern="\d+(,\d{2})?" required /></td>
+                    }
                 </tr>
 
                 <tr>
                     <td>Publisher:</td>
-                    <td><input type="text" name="PublisherName" value="@ViewData["PublisherName"]" /></td>
+                    <td><input type="text" name="PublisherName" value="@ViewData["PublisherName"]" required/></td>
                 </tr>
                 <tr>
                     <td><input type="hidden" name="PublisherId" value="@ViewData["PublisherId"]" /></td>
@@ -41,11 +47,11 @@
                     <td>Published at:</td>
                     @if (Model.PublishedAt == DateTime.MinValue)
                     {
-                        <td><input type="text" name="PublishedAt" value="" /></td>
+                        <td><input type="text" name="PublishedAt" value="" required/></td>
                     }
                     else
                     {
-                           <td><input type="text" name="PublishedAt" value='@Model.PublishedAt.ToString("yyyy-MM-dd")' /></td>
+                           <td><input type="text" name="PublishedAt" value='@Model.PublishedAt.ToString("yyyy-MM-dd")' required/></td>
                     }
                 </tr>
 

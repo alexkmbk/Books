@@ -138,10 +138,10 @@ var Table = (function () {
             }
             if (isEditable) {
                 if (currentcell == null) {
-                    row.find("input").first().focus();
+                    row.find(".tableinput").first().focus();
                 }
                 else {
-                    currentcell.find("input").first().focus();
+                    currentcell.find(".tableinput").first().focus();
                 }
                 _this.inEditing = true;
             }

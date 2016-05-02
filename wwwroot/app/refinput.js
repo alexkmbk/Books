@@ -25,7 +25,6 @@ function SetRefInput(valueInputName, idInputName, container, autoCompleteSource,
             valueInput.parent().append(button);
         }
         if (autoCompleteSource) {
-            var idInput = idInput;
             valueInput.autocomplete({
                 source: autoCompleteSource,
                 minLength: 1,
@@ -43,5 +42,14 @@ function SetRefInput(valueInputName, idInputName, container, autoCompleteSource,
             });
             valueInput.autocomplete("widget").insertAfter(container);
         }
+        valueInput.on('keydown', function (e) {
+            if (e.keyCode == keyCodes.ENTER) {
+                if (valueInput.val() == "") {
+                    idInput.val("");
+                    if (ChangeValueHandler)
+                        ChangeValueHandler();
+                }
+            }
+        });
     }
 }
