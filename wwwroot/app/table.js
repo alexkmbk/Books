@@ -39,6 +39,14 @@ var Table = (function () {
         if (parentForm === void 0) { parentForm = null; }
         if (IdColumn === void 0) { IdColumn = null; }
         this.dontEndEditing = false;
+        this.removeEventListeners = function () {
+            var parent = $(_this.elem.parentNode);
+            parent.off('keydown', _this.idSelector + '_input');
+            parent.off('click', _this.idSelector + ' > tbody');
+            parent.off('click', _this.idSelector + ' > tbody > tr');
+            parent.off('dblclick', _this.idSelector + ' > tbody > tr > td');
+            parent.off('keydown', '.tableinput');
+        };
         this.BeforeDelete = function () {
             var rowData = new Array();
             var columns = _this.columns;

@@ -194,6 +194,7 @@ export function OpenEditDialog(_isNew: boolean, _Id = null, _parentForm: Window)
                         // Если запрос выполнен без ошибок то присваиваем полученный с сервера html код, элементу authorsTable
                         if (data["isOk"]) {
                             $('#authors_table_div').html(data["view"]);
+                            if (authors_table != undefined) authors_table.removeEventListeners();
                             InitDialog();
                             if (isNew) {
                                 // Установим все поля ввода авторов неактивными, поскольку книга еще не записана в базу

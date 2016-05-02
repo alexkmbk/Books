@@ -2,21 +2,8 @@
 System.register(["./books.dialog", "./authors_choice_dialog", "./publishers_choice_dialog"], function(exports_1) {
     var BookDialog, AuthorsChoiceDialog, PublishersChoiceDialog;
     var books_table;
-    function InitBooksTable() {
-        var cols = [new Column({ name: "Id", isVisible: false }),
-            new Column({ name: "PublisherId", isVisible: false }),
-            new Column({ name: "Name", isVisible: true }),
-            new Column({ name: "Description", isVisible: true }),
-            new Column({ name: "Price", isVisible: true }),
-            new Column({ name: "NamePublisher", isVisible: true }),
-            new Column({ name: "PublishedAt", isVisible: true }),
-            new Column({ name: "Authors", isVisible: true }),
-        ];
-        books_table = new Table("books_table", false, cols, $(window));
+    function InitBooksTableFilters() {
         var panel = $("#books_panel");
-        panel.find("input[name='AddButton']").get(0).onclick = books_table.Add;
-        panel.find("input[name='EditButton']").get(0).onclick = books_table.Edit;
-        panel.find("input[name='DeleteButton']").get(0).onclick = books_table.BeforeDelete;
         var filterFields = $("div[name='filters']").eq(0);
         // При изменении полей отбора, перерисуем таблицу
         function filter() {
@@ -26,10 +13,12 @@ System.register(["./books.dialog", "./authors_choice_dialog", "./publishers_choi
                 data: {
                     AuthorId: filterFields.find("input[name = 'AuthorId']").val(),
                     PublisherId: filterFields.find("input[name = 'PublisherId']").val(),
-                    ajax: "true" },
+                    ajax: "true"
+                },
                 success: function (data) {
                     if (data["isOk"]) {
                         $('#books_table_div').html(data["view"]);
+                        books_table.removeEventListeners();
                         InitBooksTable();
                     }
                 }
@@ -58,6 +47,22 @@ System.register(["./books.dialog", "./authors_choice_dialog", "./publishers_choi
             return false;
         });
     }
+    function InitBooksTable() {
+        var cols = [new Column({ name: "Id", isVisible: false }),
+            new Column({ name: "PublisherId", isVisible: false }),
+            new Column({ name: "Name", isVisible: true }),
+            new Column({ name: "Description", isVisible: true }),
+            new Column({ name: "Price", isVisible: true }),
+            new Column({ name: "NamePublisher", isVisible: true }),
+            new Column({ name: "PublishedAt", isVisible: true }),
+            new Column({ name: "Authors", isVisible: true }),
+        ];
+        books_table = new Table("books_table", false, cols, $(window));
+        var panel = $("#books_panel");
+        panel.find("input[name='AddButton']").get(0).onclick = books_table.Add;
+        panel.find("input[name='EditButton']").get(0).onclick = books_table.Edit;
+        panel.find("input[name='DeleteButton']").get(0).onclick = books_table.BeforeDelete;
+    }
     return {
         setters:[
             function (BookDialog_1) {
@@ -71,6 +76,7 @@ System.register(["./books.dialog", "./authors_choice_dialog", "./publishers_choi
             }],
         execute: function() {
             InitBooksTable();
+            InitBooksTableFilters();
             window.addEventListener("books_table_Pick", function (e) {
                 var rowdata = e.detail;
                 BookDialog.OpenEditDialog(false, rowdata['Id'], window);
@@ -101,6 +107,8 @@ System.register(["./books.dialog", "./authors_choice_dialog", "./publishers_choi
                 });
             });
             window.addEventListener("books_table_AfterSave", function (e) {
+                if (books_table != undefined)
+                    books_table.removeEventListeners();
                 InitBooksTable();
             });
         }

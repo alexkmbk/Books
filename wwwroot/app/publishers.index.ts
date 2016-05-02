@@ -4,18 +4,9 @@ var saving;
 
 var publishers_table: Table;
 
-
-function InitPublishersTable() {
-
-    var cols = [new Column({ name: "Id", isVisible: false }),
-        new Column({ name: "Name", isVisible: true })];
-
-    publishers_table = new Table("publishers_table", true, cols, $(window), cols[0]);
+function InitPublishersTableFilters() {
 
     var panel = $("#publishers_panel");
-    panel.find("input[name='AddButton']").get(0).onclick = publishers_table.Add;
-    panel.find("input[name='EditButton']").get(0).onclick = publishers_table.Edit;
-    panel.find("input[name='DeleteButton']").get(0).onclick = publishers_table.BeforeDelete;
 
     // При изменении полей отбора, перерисуем таблицу
     function filter() {
@@ -29,6 +20,7 @@ function InitPublishersTable() {
             success: function (data) {
                 if (data["isOk"]) {
                     $('#publishers_table_div').html(data["view"]);
+                    if (publishers_table != undefined) publishers_table.removeEventListeners();
                     InitPublishersTable();
                 }
             }
@@ -48,9 +40,25 @@ function InitPublishersTable() {
             });
         return false;
     });
+
 }
 
+function InitPublishersTable() {
+
+    var cols = [new Column({ name: "Id", isVisible: false }),
+        new Column({ name: "Name", isVisible: true })];
+
+    publishers_table = new Table("publishers_table", true, cols, $(window), cols[0]);
+
+    var panel = $("#publishers_panel");
+    panel.find("input[name='AddButton']").get(0).onclick = publishers_table.Add;
+    panel.find("input[name='EditButton']").get(0).onclick = publishers_table.Edit;
+    panel.find("input[name='DeleteButton']").get(0).onclick = publishers_table.BeforeDelete;
+
+ }
+
 InitPublishersTable();
+InitPublishersTableFilters();
 
 //Удалить запись
 window.addEventListener("publishers_table_BeforeDelete", function (e: any) {

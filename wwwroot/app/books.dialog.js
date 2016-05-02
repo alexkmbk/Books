@@ -153,6 +153,8 @@ System.register(["./authors_choice_dialog", "./publishers_choice_dialog"], funct
                             // Если запрос выполнен без ошибок то присваиваем полученный с сервера html код, элементу authorsTable
                             if (data["isOk"]) {
                                 $('#authors_table_div').html(data["view"]);
+                                if (authors_table != undefined)
+                                    authors_table.removeEventListeners();
                                 InitDialog();
                                 if (isNew) {
                                     // Установим все поля ввода авторов неактивными, поскольку книга еще не записана в базу

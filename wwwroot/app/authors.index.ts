@@ -4,17 +4,9 @@ var saving;
 
 var authors_table: Table;
 
-function InitAuthorsTable() {
-
-    var cols = [new Column({ name: "Id", isVisible: false }),
-        new Column({ name: "Name", isVisible: true })];
-
-    authors_table = new Table("authors_table", true, cols, $(window), cols[0]);
+function InitAuthorsTableFilters() {
 
     var panel = $("#authors_panel");
-    panel.find("input[name='AddButton']").get(0).onclick = authors_table.Add;
-    panel.find("input[name='EditButton']").get(0).onclick = authors_table.Edit;
-    panel.find("input[name='DeleteButton']").get(0).onclick = authors_table.BeforeDelete;
 
     // При изменении полей отбора, перерисуем таблицу
     function filter() {
@@ -28,6 +20,7 @@ function InitAuthorsTable() {
             success: function (data) {
                 if (data["isOk"]) {
                     $('#authors_table_div').html(data["view"]);
+                    if (authors_table != undefined) authors_table.removeEventListeners();
                     InitAuthorsTable();
                 }
             }
@@ -50,7 +43,22 @@ function InitAuthorsTable() {
 
 }
 
+function InitAuthorsTable() {
+
+    var cols = [new Column({ name: "Id", isVisible: false }),
+        new Column({ name: "Name", isVisible: true })];
+
+    authors_table = new Table("authors_table", true, cols, $(window), cols[0]);
+
+    var panel = $("#authors_panel");
+    panel.find("input[name='AddButton']").get(0).onclick = authors_table.Add;
+    panel.find("input[name='EditButton']").get(0).onclick = authors_table.Edit;
+    panel.find("input[name='DeleteButton']").get(0).onclick = authors_table.BeforeDelete;
+
+}
+
 InitAuthorsTable();
+InitAuthorsTableFilters();
 
 //Удалить запись
 window.addEventListener("authors_table_BeforeDelete", function (e: any) {

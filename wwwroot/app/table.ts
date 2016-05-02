@@ -96,6 +96,15 @@ class Table {
         this.obj.find('tbody > tr').first().addClass('highlight');
       }
 
+    public removeEventListeners = () => {
+        var parent: JQuery = $(this.elem.parentNode);
+        parent.off('keydown', this.idSelector + '_input');
+        parent.off('click', this.idSelector + ' > tbody');
+        parent.off('click', this.idSelector + ' > tbody > tr');
+        parent.off('dblclick', this.idSelector + ' > tbody > tr > td');
+        parent.off('keydown', '.tableinput');
+    }
+
     public SetInputValue(ColName: string, value: any) {
         this.obj.find('#' + ColName + '_input').val(value);
     }

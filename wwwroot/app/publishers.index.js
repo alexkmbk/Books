@@ -1,14 +1,8 @@
 System.register(["./books_choice_dialog"], function(exports_1) {
     var BooksChoiceDialog;
     var saving, publishers_table;
-    function InitPublishersTable() {
-        var cols = [new Column({ name: "Id", isVisible: false }),
-            new Column({ name: "Name", isVisible: true })];
-        publishers_table = new Table("publishers_table", true, cols, $(window), cols[0]);
+    function InitPublishersTableFilters() {
         var panel = $("#publishers_panel");
-        panel.find("input[name='AddButton']").get(0).onclick = publishers_table.Add;
-        panel.find("input[name='EditButton']").get(0).onclick = publishers_table.Edit;
-        panel.find("input[name='DeleteButton']").get(0).onclick = publishers_table.BeforeDelete;
         // При изменении полей отбора, перерисуем таблицу
         function filter() {
             $.ajax({
@@ -21,6 +15,8 @@ System.register(["./books_choice_dialog"], function(exports_1) {
                 success: function (data) {
                     if (data["isOk"]) {
                         $('#publishers_table_div').html(data["view"]);
+                        if (publishers_table != undefined)
+                            publishers_table.removeEventListeners();
                         InitPublishersTable();
                     }
                 }
@@ -38,6 +34,15 @@ System.register(["./books_choice_dialog"], function(exports_1) {
             return false;
         });
     }
+    function InitPublishersTable() {
+        var cols = [new Column({ name: "Id", isVisible: false }),
+            new Column({ name: "Name", isVisible: true })];
+        publishers_table = new Table("publishers_table", true, cols, $(window), cols[0]);
+        var panel = $("#publishers_panel");
+        panel.find("input[name='AddButton']").get(0).onclick = publishers_table.Add;
+        panel.find("input[name='EditButton']").get(0).onclick = publishers_table.Edit;
+        panel.find("input[name='DeleteButton']").get(0).onclick = publishers_table.BeforeDelete;
+    }
     return {
         setters:[
             function (BooksChoiceDialog_1) {
@@ -45,6 +50,7 @@ System.register(["./books_choice_dialog"], function(exports_1) {
             }],
         execute: function() {
             InitPublishersTable();
+            InitPublishersTableFilters();
             //Удалить запись
             window.addEventListener("publishers_table_BeforeDelete", function (e) {
                 var rowdata = e.detail;

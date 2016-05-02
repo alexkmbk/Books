@@ -6,6 +6,64 @@ import * as PublishersChoiceDialog from "./publishers_choice_dialog";
 
 var books_table: Table;
 
+function InitBooksTableFilters() {
+
+
+    var panel = $("#books_panel");
+    var filterFields = $("div[name='filters']").eq(0);
+
+    // При изменении полей отбора, перерисуем таблицу
+    function filter() {
+        $.ajax({
+            type: 'GET',
+            url: 'Books/Index',
+            data: {
+                AuthorId: filterFields.find("input[name = 'AuthorId']").val(),
+                PublisherId: filterFields.find("input[name = 'PublisherId']").val(),
+                ajax: "true"
+            },
+            success: function (data) {
+                if (data["isOk"]) {
+                    $('#books_table_div').html(data["view"]);
+                    books_table.removeEventListeners();
+                    InitBooksTable();
+                }
+            }
+        });
+    }
+
+
+    SetRefInput("AuthorName", "AuthorId", filterFields.find("div[name = 'Author']"), "Authors/GetAutocompleteAuthorsList", true, filter, true);
+
+    filterFields.find("div[name = 'Author']").get(0).addEventListener("AuthorName_ChoiceFormClick", function (e: any) {
+        AuthorsChoiceDialog.OpenAuthorsChoiceDialog(panel.find("div[name = 'dialog_authors_choice']"), function (rowData: any) {
+            filterFields.find("input[name = 'AuthorName']").val(rowData["Name"]);
+            filterFields.find("input[name = 'AuthorId']").val(rowData["Id"]);
+            filter();
+        },
+            function () {
+                //accountdialog_table.choiceFormIsOpen = false;
+            });
+        return false;
+    });
+
+    SetRefInput("PublisherName", "PublisherId", filterFields.find("div[name = 'Publisher']"), "Publishers/GetAutocompletePublishersList", true, filter, true);
+
+    filterFields.find("div[name = 'Publisher']").get(0).addEventListener("PublisherName_ChoiceFormClick", function (e: any) {
+        PublishersChoiceDialog.OpenPublishersChoiceDialog(panel.find("div[name = 'dialog_publishers_choice']"), function (rowData: any) {
+            filterFields.find("input[name = 'PublisherName']").val(rowData["Name"]);
+            filterFields.find("input[name = 'PublisherId']").val(rowData["Id"]);
+            filter();
+        },
+            function () {
+                //accountdialog_table.choiceFormIsOpen = false;
+            });
+        return false;
+    });    
+
+
+}
+
 function InitBooksTable() {
 
     var cols: Column[] = [new Column({ name: "Id", isVisible: false }),
@@ -24,58 +82,10 @@ function InitBooksTable() {
     panel.find("input[name='AddButton']").get(0).onclick = books_table.Add;
     panel.find("input[name='EditButton']").get(0).onclick = books_table.Edit;
     panel.find("input[name='DeleteButton']").get(0).onclick = books_table.BeforeDelete;
-
-    var filterFields = $("div[name='filters']").eq(0);
-
-    // При изменении полей отбора, перерисуем таблицу
-    function filter() {
-        $.ajax({
-            type: 'GET',
-            url: 'Books/Index',
-            data: {
-                AuthorId: filterFields.find("input[name = 'AuthorId']").val(),
-                PublisherId: filterFields.find("input[name = 'PublisherId']").val(),
-                ajax: "true"},
-            success: function (data) {
-                if (data["isOk"]) {
-                    $('#books_table_div').html(data["view"]);
-                    InitBooksTable();
-                }
-            }
-        });
-    }
-
-    SetRefInput("AuthorName", "AuthorId",  filterFields.find("div[name = 'Author']"), "Authors/GetAutocompleteAuthorsList", true, filter, true);
-
-    filterFields.find("div[name = 'Author']").get(0).addEventListener("AuthorName_ChoiceFormClick", function (e: any) {
-            AuthorsChoiceDialog.OpenAuthorsChoiceDialog(panel.find("div[name = 'dialog_authors_choice']"), function (rowData: any) {
-            filterFields.find("input[name = 'AuthorName']").val(rowData["Name"]);
-            filterFields.find("input[name = 'AuthorId']").val(rowData["Id"]);
-            filter();
-        },
-            function () {
-                //accountdialog_table.choiceFormIsOpen = false;
-            });
-        return false;
-    });    
-
-    SetRefInput("PublisherName", "PublisherId", filterFields.find("div[name = 'Publisher']"), "Publishers/GetAutocompletePublishersList", true, filter, true);
-
-    filterFields.find("div[name = 'Publisher']").get(0).addEventListener("PublisherName_ChoiceFormClick", function (e: any) {
-        PublishersChoiceDialog.OpenPublishersChoiceDialog(panel.find("div[name = 'dialog_publishers_choice']"), function (rowData: any) {
-            filterFields.find("input[name = 'PublisherName']").val(rowData["Name"]);
-            filterFields.find("input[name = 'PublisherId']").val(rowData["Id"]);
-            filter();
-        },
-            function () {
-                //accountdialog_table.choiceFormIsOpen = false;
-            });
-        return false;
-    });    
-
 }
 
 InitBooksTable();
+InitBooksTableFilters();
 
 window.addEventListener("books_table_Pick", function (e: any) {
     var rowdata: Array<any> = e.detail;
@@ -110,5 +120,6 @@ window.addEventListener("books_table_BeforeDelete", function (e: any) {
 });
 
 window.addEventListener("books_table_AfterSave", function (e: any) {
+    if (books_table != undefined) books_table.removeEventListeners();
     InitBooksTable();
 });
