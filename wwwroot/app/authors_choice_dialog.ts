@@ -9,7 +9,6 @@ function AuthorChoiceForm_InitDialog(parent: JQuery, authorsdlg: JQuery, PickEve
     authorsdlg.dialog({
         modal: true,
         width: "50%",
-        position: { my: "bottom", at: "bottom", of: window },
         open: function (event, ui) {
             $(this).parent().css('position', 'fixed');
         },

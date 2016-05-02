@@ -7,7 +7,6 @@ System.register([], function(exports_1) {
         booksdlg.dialog({
             modal: true,
             width: "50%",
-            position: { my: "bottom", at: "bottom", of: window },
             open: function (event, ui) {
                 $(this).parent().css('position', 'fixed');
             },

@@ -285,6 +285,7 @@ class Table {
         });
         row.attr("isNew", "false");
         row.addClass('highlight');
+        row.siblings().removeClass('highlight');
     }
 
     // Обработка ввода с клавиатуры 
@@ -414,12 +415,6 @@ class Table {
                 //$(":focus").focus();
                 this.obj.find(".tableinput").first().focus();
             }
-            /*else if (e.target.id == this.name || target.parents(this.idSelector).length) {
-                if (e.target.className.indexOf("tableinput") == -1) {
-                    $(this.idSelector + "_input").focus();
-                }
-
-            }*/
         }
 
     };

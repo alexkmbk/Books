@@ -9,7 +9,6 @@ function PublisherChoiceForm_InitDialog(parent: JQuery, publishersdlg: JQuery, P
     publishersdlg.dialog({
         modal: true,
         width: "50%",
-        position: { my: "bottom", at: "bottom", of: window },
         open: function (event, ui) {
             $(this).parent().css('position', 'fixed');
         },

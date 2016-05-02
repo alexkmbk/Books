@@ -201,6 +201,7 @@ var Table = (function () {
             });
             row.attr("isNew", "false");
             row.addClass('highlight');
+            row.siblings().removeClass('highlight');
         };
         // Обработка ввода с клавиатуры 
         this.InputKeydown = function (e) {
