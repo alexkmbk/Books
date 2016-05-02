@@ -8,6 +8,12 @@ assembly="Books" namespace="Books.Models">
       <generator class="native" />
     </id>
     <property name="Name" />
+
+    <bag name="Books" table="BooksToAuthors" lazy="true" cascade="none">
+      <key column="IdAuthor"/>
+      <many-to-many class="Book" column="IdBook"/>
+    </bag>
+    
   </class>
 
 </hibernate-mapping>

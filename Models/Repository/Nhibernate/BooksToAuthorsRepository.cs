@@ -27,11 +27,10 @@ namespace Books.Models.Repository.NHibernate
         public void Delete(int bookId, int AuthorId)
         {
             var transaction = session.BeginTransaction();
-            var booksToAuthors = session.Query<BooksToAuthors>().Where(x => x.IdBook == bookId && x.IdAuthor == AuthorId).ToList();
-            foreach(var e in booksToAuthors)
-            {
-                session.Delete(e);
-            }
+            Book book = session.Get<Book>(bookId);
+            Author author = session.Get<Author>(AuthorId);
+            book.Authors.RemoveAt(book.Authors.IndexOf(author));
+
             transaction.Commit();
         }
 

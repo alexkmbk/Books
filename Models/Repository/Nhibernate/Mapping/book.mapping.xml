@@ -14,7 +14,7 @@ assembly="Books" namespace="Books.Models">
 
     <many-to-one name="publisher" column="IdPublisher" />
 
-    <bag name="Authors" table="BooksToAuthors">
+    <bag name="Authors" table="BooksToAuthors" lazy="true" cascade="none">
       <key column="IdBook"/>
       <many-to-many class="Author" column="IdAuthor"/>
     </bag>
