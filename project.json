@@ -1,7 +1,7 @@
 {
   "version": "1.0.0-*",
   "compilationOptions": {
-    "emitEntryPoint": true
+    "emitEntryPoint": false
   },
 
   "dependencies": {
@@ -17,9 +17,12 @@
     "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
     "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
     "Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final",
+    "Microsoft.Net.Http": "2.2.29",
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.0.0-rc1-final",
     "NHibernate": "4.0.4.4000",
-    "Npgsql": "3.0.5"
+    "Npgsql": "3.0.5",
+    "NUnit": "3.2.0",
+    "NUnitLite": "3.0.0"
   },
 
   "commands": {

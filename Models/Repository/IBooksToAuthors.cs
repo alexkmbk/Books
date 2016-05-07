@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Books.Models.Repository
 {
-    interface IBooksToAuthorsRepository : IDisposable
+    public interface IBooksToAuthorsRepository : IDisposable
     {
         IEnumerable<Author> GetAuthors(int bookId);
         void Create(BooksToAuthors booksToAuthors);

@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace Books.Models.Repository
 {
-    interface IPublisherRepository : IDisposable
+    public interface IPublisherRepository : IDisposable
     {
-        IEnumerable<Publisher> GetPublishers(Book book);
+        IEnumerable<Publisher> GetPublishers(Book book=null);
         Publisher GetPublisher(int? id);
         void Create(Publisher publisher);
         void Update(Publisher publisher);

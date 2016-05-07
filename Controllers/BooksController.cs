@@ -20,11 +20,12 @@ namespace Books.Controllers
 {
     public class BooksController : Controller
     {
-        private BookShopUnitOfWork unitOfWork;
+        private IBookShopUnitOfWork unitOfWork;
 
-        public BooksController(IApplicationEnvironment appEnvironment)
+        public BooksController(IBookShopUnitOfWork _unitOfWork = null, IApplicationEnvironment appEnvironment = null)
         {
-            unitOfWork = new BookShopUnitOfWork(appEnvironment);  
+            if (_unitOfWork==null) unitOfWork = new BookShopUnitOfWork(appEnvironment);  
+            else unitOfWork = _unitOfWork;
         }
 
         // Функция для формирования html кода по переданному шаблону вида и модели

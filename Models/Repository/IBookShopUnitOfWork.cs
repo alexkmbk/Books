@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Books.Models.Repository
+﻿namespace Books.Models.Repository
 {
    public interface IBookShopTransaction
     {
@@ -12,6 +7,11 @@ namespace Books.Models.Repository
 
     public interface IBookShopUnitOfWork
     {
-       IBookShopTransaction BeginTransaction();
+        IBookRepository BookRep { get; }
+        IAuthorRepository AuthorRep { get; }
+        IPublisherRepository PublisherRep { get; }
+        IBooksToAuthorsRepository BooksToAuthorsRep { get; }
+
+        IBookShopTransaction BeginTransaction();
     }
 }

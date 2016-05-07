@@ -7,6 +7,9 @@ using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.PlatformAbstractions;
+using Books.Models.Repository;
+using Books.Models.Repository.NHibernate;
 
 namespace Books
 {

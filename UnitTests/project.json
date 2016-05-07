@@ -1,0 +1,33 @@
+﻿{
+  "version": "1.0.0-*",
+  "description": "UnitTests Console Application",
+  "authors": [ "Alexey" ],
+  "tags": [ "" ],
+  "projectUrl": "",
+  "licenseUrl": "",
+
+  "compilationOptions": {
+    "emitEntryPoint": true
+  },
+
+  "dependencies": {
+    "Books": "1.0.0-*",
+    "Microsoft.Net.Http": "2.2.29",
+    "NUnit": "3.2.0",
+    "NUnitLite": "3.0.0"
+  },
+
+  "commands": {
+    "UnitTests": "UnitTests"
+  },
+
+  "frameworks": {
+    "dnx451": {
+      "dependencies": {
+        "Books": "1.0.0-*",
+        "NUnit": "3.2.0",
+        "NUnitLite": "3.0.0"
+      }
+    }
+  }
+}

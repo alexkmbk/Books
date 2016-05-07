@@ -27,18 +27,18 @@ namespace Books.Models.Repository.NHibernate
 
     public class BookShopUnitOfWork : IBookShopUnitOfWork
     {
-        public ISession nHibernateSession;
-        private BookRepository bookRep;
-        private AuthorRepository authorRep;
-        private PublisherRepository publisherRep;
-        private BooksToAuthorsRepository booksToAuthorsRep;
+        private ISession nHibernateSession;
+        private IBookRepository bookRep;
+        private IAuthorRepository authorRep;
+        private IPublisherRepository publisherRep;
+        private IBooksToAuthorsRepository booksToAuthorsRep;
 
         public BookShopUnitOfWork(IApplicationEnvironment _appEnvironment)
         {
             nHibernateSession = OpenNHibSession.OpenSession(_appEnvironment);
         }
 
-        public BookRepository BookRep
+        public IBookRepository BookRep
         {
             get
             {
@@ -50,7 +50,7 @@ namespace Books.Models.Repository.NHibernate
             }
         }
 
-        public AuthorRepository AuthorRep
+        public IAuthorRepository AuthorRep
         {
             get
             {
@@ -62,7 +62,7 @@ namespace Books.Models.Repository.NHibernate
             }
         }
 
-        public BooksToAuthorsRepository BooksToAuthorsRep
+        public IBooksToAuthorsRepository BooksToAuthorsRep
         {
             get
             {
@@ -74,7 +74,7 @@ namespace Books.Models.Repository.NHibernate
             }
         }
 
-        public PublisherRepository PublisherRep
+        public IPublisherRepository PublisherRep
         {
             get
             {
