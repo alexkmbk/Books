@@ -12,7 +12,7 @@
 
     </div>
 
-    <form method="POST" id="form_book" action="javascript:void(null);" onsubmit="SaveChanges(true)">
+    <form method="POST" id="form_book" action="javascript:void(null);">
         <div name="fields" class="group_col">
             <table class="fields">
                 <tr>
@@ -63,8 +63,7 @@
             </div>
 
             <div id="dialog_book_panel" class="group_row footer">
-                <input name="SaveAndCloseButton" type="button" value="Записать и закрыть" class="btn btn-default" />
-                <input name="SaveButton" type="button" value="Записать" class="btn btn-default" />
+                <input name="SaveAndCloseButton" type="submit" value="Записать и закрыть" class="btn btn-default" />
                 <input type="button" value="Закрыть" class="btn btn-default" name="close" onclick="$('#dialog_book').dialog('close')" />
             </div>
         </div>

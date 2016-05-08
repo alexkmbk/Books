@@ -104,8 +104,27 @@ class Table {
         parent.off('dblclick');
         parent.off('keydown', '.tableinput');
 
-       // var event = new CustomEvent(this.name + "_Pick", { 'detail': rowData });
-       // this.parentForm.get(0).dispatchEvent(event);
+    }
+
+    public GetData(): Array<Array<any>>{
+        var res = new Array();
+        var columns = this.columns;
+        var table = this;
+        var j = 0;
+        this.obj.find('tbody > tr').each(function (index, value) {
+            var rowData = new Array();
+            $(this).find('td').each(function (index, value) {
+                var name = columns[index].name;
+                var val = $(this).html();
+                rowData[name] = val;
+            });
+            if (rowData[table.IdColumn.name]) {
+                res[j] = rowData;
+                j = j + 1; 
+            }
+        });
+
+        return res;
     }
 
     public SetInputValue(ColName: string, value: any) {
@@ -257,8 +276,13 @@ class Table {
         this.dontEndEditing = true;
 
         // Удалим пустую строку в пустой таблице
-        $('.EmptyTable tr:last').first().remove();
-        $('.EmptyTable').removeClass("EmptyTable");
+        var isEmpty = false;
+        if (this.obj.hasClass('EmptyTable')) {
+            this.obj.find('tbody > tr').remove();
+            isEmpty = true;
+        }
+        this.obj.removeClass("EmptyTable");
+        this.obj = $(this.idSelector);
 
         var emptyRowStr = "<tr>";
         for (var i = 0; i < this.columns.length; i++) {
@@ -266,8 +290,12 @@ class Table {
         }
         emptyRowStr = emptyRowStr + "</tr>";
 
-        this.obj.find('tr:last').first().after(emptyRowStr);
-        this.EditCell(this.obj.find('tr:last').first(),null,true);
+        if (isEmpty)
+            this.obj.find('tbody').html(emptyRowStr);
+        else
+            this.obj.find('tbody > tr:last').first().after(emptyRowStr);
+
+        this.EditCell(this.obj.find('tbody > tr:last').first(),null,true);
 
         var event = new CustomEvent(this.name + "_New");
         this.parentForm.get(0).dispatchEvent(event);
@@ -320,7 +348,6 @@ class Table {
                 var rowData = new Array();
                 var columns = this.columns;
                 td.parent().find("input[type!='button']").each(function (index, value) {
-                    //rowdata[index] = $(this).val();
                     rowData[columns[index].name] = $(this).val();
                 });
                 var event = new CustomEvent(this.name + "_SaveTable", { 'detail': rowData });

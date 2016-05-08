@@ -46,8 +46,6 @@ var Table = (function () {
             parent.off('click', _this.idSelector + ' > tbody > tr');
             parent.off('dblclick');
             parent.off('keydown', '.tableinput');
-            // var event = new CustomEvent(this.name + "_Pick", { 'detail': rowData });
-            // this.parentForm.get(0).dispatchEvent(event);
         };
         this.BeforeDelete = function () {
             var rowData = new Array();
@@ -176,15 +174,23 @@ var Table = (function () {
             }
             _this.dontEndEditing = true;
             // Удалим пустую строку в пустой таблице
-            $('.EmptyTable tr:last').first().remove();
-            $('.EmptyTable').removeClass("EmptyTable");
+            var isEmpty = false;
+            if (_this.obj.hasClass('EmptyTable')) {
+                _this.obj.find('tbody > tr').remove();
+                isEmpty = true;
+            }
+            _this.obj.removeClass("EmptyTable");
+            _this.obj = $(_this.idSelector);
             var emptyRowStr = "<tr>";
             for (var i = 0; i < _this.columns.length; i++) {
                 emptyRowStr = emptyRowStr + (_this.columns[i].isVisible ? "<td></td>" : "<td style='display:none;'></td>");
             }
             emptyRowStr = emptyRowStr + "</tr>";
-            _this.obj.find('tr:last').first().after(emptyRowStr);
-            _this.EditCell(_this.obj.find('tr:last').first(), null, true);
+            if (isEmpty)
+                _this.obj.find('tbody').html(emptyRowStr);
+            else
+                _this.obj.find('tbody > tr:last').first().after(emptyRowStr);
+            _this.EditCell(_this.obj.find('tbody > tr:last').first(), null, true);
             var event = new CustomEvent(_this.name + "_New");
             _this.parentForm.get(0).dispatchEvent(event);
         };
@@ -228,7 +234,6 @@ var Table = (function () {
                     var rowData = new Array();
                     var columns = _this.columns;
                     td.parent().find("input[type!='button']").each(function (index, value) {
-                        //rowdata[index] = $(this).val();
                         rowData[columns[index].name] = $(this).val();
                     });
                     var event = new CustomEvent(_this.name + "_SaveTable", { 'detail': rowData });
@@ -346,6 +351,25 @@ var Table = (function () {
         //Выделим первую строку
         this.obj.find('tbody > tr').first().addClass('highlight');
     }
+    Table.prototype.GetData = function () {
+        var res = new Array();
+        var columns = this.columns;
+        var table = this;
+        var j = 0;
+        this.obj.find('tbody > tr').each(function (index, value) {
+            var rowData = new Array();
+            $(this).find('td').each(function (index, value) {
+                var name = columns[index].name;
+                var val = $(this).html();
+                rowData[name] = val;
+            });
+            if (rowData[table.IdColumn.name]) {
+                res[j] = rowData;
+                j = j + 1;
+            }
+        });
+        return res;
+    };
     Table.prototype.SetInputValue = function (ColName, value) {
         this.obj.find('#' + ColName + '_input').val(value);
     };

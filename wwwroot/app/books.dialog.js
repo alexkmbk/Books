@@ -3,11 +3,6 @@
 System.register(["./authors_choice_dialog", "./publishers_choice_dialog"], function(exports_1) {
     var AuthorsChoiceDialog, PublishersChoiceDialog;
     var autoComplete, input, dlg, saving, isNew, bookId, authors_table, parentForm;
-    function SetDialogActive(dlg, data) {
-        $('#authors_table_div :input').removeAttr('disabled');
-        $('#authors_table_div').removeClass('disabled');
-        isNew = false;
-    }
     function InitDialog() {
         dlg.dialog({
             width: "60%",
@@ -34,7 +29,6 @@ System.register(["./authors_choice_dialog", "./publishers_choice_dialog"], funct
         panel.find("input[name='NewButton']").get(0).onclick = authors_table.Add;
         panel.find("input[name='EditButton']").get(0).onclick = authors_table.Edit;
         panel.find("input[name='DeleteButton']").get(0).onclick = authors_table.BeforeDelete;
-        $("#form_book").get(0).onsubmit = SaveAndClose;
         //Удалить запись
         dlg.get(0).addEventListener("authors_table_BeforeDelete", function (e) {
             var rowdata = e.detail;
@@ -56,32 +50,7 @@ System.register(["./authors_choice_dialog", "./publishers_choice_dialog"], funct
             });
         });
         dlg.get(0).addEventListener("authors_table_SaveTable", function (e) {
-            var action;
-            var rowdata;
-            if (saving)
-                return;
-            saving = true;
-            action = 'Books/AddAuthorToBook';
-            rowdata = { AuthorId: e.detail["Id"], BookId: bookId };
-            $.ajax({
-                type: 'POST',
-                url: action,
-                data: rowdata,
-                success: function (data) {
-                    if (data["isOk"]) {
-                        authors_table.EndEditing(data["Id"]);
-                        saving = false;
-                    }
-                    else {
-                        msg("Ошибка записи: " + data["Errors"]);
-                        saving = false;
-                    }
-                },
-                error: function (xhr, str) {
-                    msg("Ошибка записи: " + xhr.responseText);
-                    saving = false;
-                }
-            });
+            authors_table.EndEditing();
         });
         authors_table.elem.addEventListener("authors_table_ChoiceFormClick_Name", function (e) {
             AuthorsChoiceDialog.OpenAuthorsChoiceDialog($("#dialog_authors"), function (rowData) {
@@ -98,9 +67,9 @@ System.register(["./authors_choice_dialog", "./publishers_choice_dialog"], funct
         if (_Id === void 0) { _Id = null; }
         parentForm = _parentForm;
         // Удалим ранее созданный диалог, чтобы очистить все свойства
-        if ($('div[aria-describedby="dialog_book"]').length > 0) {
-            return;
-        }
+        //if ($('div[aria-describedby="dialog_book"]').length>0) {
+        //    return;
+        //}
         $.ajax({
             type: 'GET',
             url: 'Books/GetDialog',
@@ -118,8 +87,7 @@ System.register(["./authors_choice_dialog", "./publishers_choice_dialog"], funct
                         }
                     });
                     var panel = $("#dialog_book_panel");
-                    panel.find("input[name='SaveAndCloseButton']").get(0).onclick = SaveAndClose;
-                    panel.find("input[name='SaveButton']").get(0).onclick = Save;
+                    $("#form_book").get(0).addEventListener('submit', SaveAndClose);
                     // Ссылочное поле с выбором издателя из таблицы Publishers
                     // Здесь реализуется возможность выбора с помощью автокомплита и формы выбора
                     var fields = dlg.find("div[name='fields']").eq(0);
@@ -151,13 +119,6 @@ System.register(["./authors_choice_dialog", "./publishers_choice_dialog"], funct
                                 if (authors_table != undefined)
                                     authors_table.removeEventListeners();
                                 InitDialog();
-                                if (isNew) {
-                                    // Установим все поля ввода авторов неактивными, поскольку книга еще не записана в базу
-                                    $('#authors_table_div :input').attr('disabled', "true");
-                                    $('#authors_table_div').addClass('disabled');
-                                }
-                                else
-                                    SetDialogActive(dlg, data);
                             }
                             else {
                                 msg("Ошибка полученния списка банковских счетов: " + data["Errors"]);
@@ -184,14 +145,20 @@ System.register(["./authors_choice_dialog", "./publishers_choice_dialog"], funct
     // Save changes
     function SaveChanges(close) {
         if (close === void 0) { close = false; }
+        var action;
         // Здесь по атрибуту isNew, определяется что это новая запись или уже существующая
         // в зависимости от этого будет вызываться различный метод контроллера: Add или Update
-        var action;
         if (isNew)
             action = 'Books/Create';
         else
             action = 'Books/Update?BookId=' + bookId;
         var formData = $('#form_book').serialize();
+        var authorsArray = authors_table.GetData();
+        var authors = new Array();
+        for (var i = 0; i < authorsArray.length; i++) {
+            authors[i] = { Id: authorsArray[i]['Id'], Name: authorsArray[i]['Name'] };
+        }
+        formData = formData + '&' + $.param({ 'Authors': authors });
         $.ajax({
             type: 'POST',
             url: action,
@@ -211,7 +178,6 @@ System.register(["./authors_choice_dialog", "./publishers_choice_dialog"], funct
                         $('#books_table_div').html(data["view"]);
                         if (isNew) {
                             bookId = data["Id"];
-                            SetDialogActive(dlg, data);
                         }
                     }
                     var event = new CustomEvent("books_table_AfterSave");

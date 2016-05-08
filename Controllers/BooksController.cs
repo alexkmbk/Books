@@ -53,7 +53,7 @@ namespace Books.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create(string name, string description, int PublisherId, float price, DateTime publishedAt)
+        public ActionResult Create(string name, string description, int PublisherId, float price, DateTime publishedAt, List<Author> Authors)
         {
             Book book = new Book();
             try
@@ -72,7 +72,10 @@ namespace Books.Controllers
                     book.publisher = publisher;
                 }
 
-
+                if (Authors != null)
+                {
+                    book.Authors = Authors;
+                }
                 unitOfWork.BookRep.Create(book);
                 transaction.Commit();
 
@@ -85,7 +88,7 @@ namespace Books.Controllers
         }
 
         [HttpPost]
-        public ActionResult Update(int BookId, string Name, string Description, int PublisherId, float Price, DateTime PublishedAt)
+        public ActionResult Update(int BookId, string Name, string Description, int PublisherId, float Price, DateTime PublishedAt, List<Author> Authors)
         {
             try
             {
@@ -105,6 +108,10 @@ namespace Books.Controllers
                     book.publisher = publisher;
                 }
 
+                if (Authors != null)
+                {
+                    book.Authors = Authors;
+                }
                 unitOfWork.BookRep.Update(book);
                 transaction.Commit();
                 return Json(new { isOk = true, Errors = "", view = RenderPartialViewToString("_Table", unitOfWork.BookRep.GetBooks()) });
