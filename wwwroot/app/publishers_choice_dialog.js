@@ -54,10 +54,6 @@ System.register([], function(exports_1) {
         });
     }
     exports_1("OpenPublishersChoiceDialog", OpenPublishersChoiceDialog);
-    function msg(str) {
-        var myDiv = document.getElementById("dialog_publishers_choiceform_divmsg");
-        myDiv.innerHTML = str;
-    }
     return {
         setters:[],
         execute: function() {

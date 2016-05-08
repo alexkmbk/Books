@@ -65,8 +65,3 @@ export function OpenPublishersChoiceDialog(parent: JQuery, PickEventHandler: Fun
     });
 
 }
-
-function msg(str) {
-    var myDiv = document.getElementById("dialog_publishers_choiceform_divmsg");
-    myDiv.innerHTML = str;
-}

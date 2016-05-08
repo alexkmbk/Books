@@ -54,10 +54,6 @@ System.register([], function(exports_1) {
         });
     }
     exports_1("OpenBooksChoiceDialog", OpenBooksChoiceDialog);
-    function msg(str) {
-        var myDiv = document.getElementById("dialog_books_choicetableform_divmsg");
-        myDiv.innerHTML = str;
-    }
     return {
         setters:[],
         execute: function() {

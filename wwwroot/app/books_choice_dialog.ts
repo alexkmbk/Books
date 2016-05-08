@@ -65,8 +65,3 @@ export function OpenBooksChoiceDialog(parent: JQuery, PickEventHandler: Function
     });
 
 }
-
-function msg(str) {
-    var myDiv = document.getElementById("dialog_books_choicetableform_divmsg");
-    myDiv.innerHTML = str;
-}

@@ -1,4 +1,5 @@
 ﻿/// <reference path="./books.dialog.ts" />
+/// <reference path="./msg.ts" />
 
 import * as BookDialog from "./books.dialog";
 import * as AuthorsChoiceDialog from "./authors_choice_dialog";
@@ -7,7 +8,6 @@ import * as PublishersChoiceDialog from "./publishers_choice_dialog";
 var books_table: Table;
 
 function InitBooksTableFilters() {
-
 
     var panel = $("#books_panel");
     var filterFields = $("div[name='filters']").eq(0);
@@ -108,13 +108,11 @@ window.addEventListener("books_table_BeforeDelete", function (e: any) {
                 books_table.Delete(); // удалить строку в диалоге
             }
             else {
-                var myDiv = document.getElementById("dialog_book_divmsg");
-                myDiv.innerHTML = "Ошибка записи: " + data["Errors"];
+                msg("Ошибка записи: " + data["Errors"]);
             }
         },
         error: function (xhr, str) {
-            var myDiv = document.getElementById("dialog_book_divmsg");
-            myDiv.innerHTML = "Ошибка записи: " + xhr.responseText;
+            msg("Ошибка записи: " + xhr.responseText);
         }
     });
 });

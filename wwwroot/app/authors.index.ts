@@ -111,14 +111,12 @@ window.addEventListener("authors_table_SaveTable", function (e: any) {
                 saving = false;
             }
             else {
-                var myDiv = document.getElementById("authors_divmsg");
-                myDiv.innerHTML = "Ошибка записи: " + data["Errors"];
+                msg("Ошибка записи: " + data["Errors"]);
                 saving = false;
             }
         },
         error: function (xhr, str) {
-            var myDiv = document.getElementById("authors_divmsg");
-            myDiv.innerHTML = "Ошибка записи: " + xhr.responseText;
+            msg("Ошибка записи: " + xhr.responseText);
             saving = false;
         }
     });

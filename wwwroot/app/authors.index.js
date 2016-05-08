@@ -97,14 +97,12 @@ System.register(["./books_choice_dialog"], function(exports_1) {
                             saving = false;
                         }
                         else {
-                            var myDiv = document.getElementById("authors_divmsg");
-                            myDiv.innerHTML = "Ошибка записи: " + data["Errors"];
+                            msg("Ошибка записи: " + data["Errors"]);
                             saving = false;
                         }
                     },
                     error: function (xhr, str) {
-                        var myDiv = document.getElementById("authors_divmsg");
-                        myDiv.innerHTML = "Ошибка записи: " + xhr.responseText;
+                        msg("Ошибка записи: " + xhr.responseText);
                         saving = false;
                     }
                 });

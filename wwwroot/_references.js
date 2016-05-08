@@ -6,6 +6,7 @@
 /// <reference path="app/books.index.js" />
 /// <reference path="app/books_choice_dialog.js" />
 /// <reference path="app/keyboard_code_enums.js" />
+/// <reference path="app/msg.js" />
 /// <reference path="app/publishers.index.js" />
 /// <reference path="app/publishers_choice_dialog.js" />
 /// <reference path="app/refinput.js" />

@@ -38,37 +38,37 @@ else {
             </tr>
         </thead>
         <tbody>
-                                                @foreach (var e in Model)
+            @foreach (var e in Model)
                 {
-                                                    <tr>
+                <tr>
 
-                                                        <td style="display:none;">@e.Id</td>
-                                                        <td style="display:none;">@e.publisher.Id</td>
-                                                        <td>@e.Name</td>
-                                                        <td>@e.Description</td>
-                                                        <td>@e.Price</td>
-                                                        <td>@e.publisher.Name</td>
+                    <td style="display:none;">@e.Id</td>
+                    <td style="display:none;">@e.publisher.Id</td>
+                    <td>@e.Name</td>
+                    <td>@e.Description</td>
+                    <td>@e.Price</td>
+                    <td>@e.publisher.Name</td>
 
-                                                        @if (e.PublishedAt == DateTime.MinValue)
-                                                        {
-                                                            <td></td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>@e.PublishedAt.ToString("yyyy-MM-dd")</td>
-                                                        }
+                    @if (e.PublishedAt == DateTime.MinValue)
+                    {
+                        <td></td>
+                    }
+                    else
+                    {
+                        <td>@e.PublishedAt.ToString("yyyy-MM-dd")</td>
+                    }
 
 
-                                                        @if (@e.Authors != null)
-                                                        {
-                                                            <td>@string.Join(", ", @e.Authors.Select(x => x.Name))</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
-                                                    </tr>
-                                                }
-</tbody>
+                    @if (@e.Authors != null)
+                    {
+                        <td>@string.Join(", ", @e.Authors.Select(x => x.Name))</td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                </tr>
+            }
+        </tbody>
     </table>
 }

@@ -47,13 +47,11 @@ System.register(["./authors_choice_dialog", "./publishers_choice_dialog"], funct
                         authors_table.Delete(); // удалить строку в диалоге
                     }
                     else {
-                        var myDiv = document.getElementById("dialog_book_divmsg");
-                        myDiv.innerHTML = "Ошибка записи: " + data["Errors"];
+                        msg("Ошибка записи: " + data["Errors"]);
                     }
                 },
                 error: function (xhr, str) {
-                    var myDiv = document.getElementById("dialog_book_divmsg");
-                    myDiv.innerHTML = "Ошибка записи: " + xhr.responseText;
+                    msg("Ошибка записи: " + xhr.responseText);
                 }
             });
         });
@@ -75,14 +73,12 @@ System.register(["./authors_choice_dialog", "./publishers_choice_dialog"], funct
                         saving = false;
                     }
                     else {
-                        var myDiv = document.getElementById("dialog_book_divmsg");
-                        myDiv.innerHTML = "Ошибка записи: " + data["Errors"];
+                        msg("Ошибка записи: " + data["Errors"]);
                         saving = false;
                     }
                 },
                 error: function (xhr, str) {
-                    var myDiv = document.getElementById("dialog_book_divmsg");
-                    myDiv.innerHTML = "Ошибка записи: " + xhr.responseText;
+                    msg("Ошибка записи: " + xhr.responseText);
                     saving = false;
                 }
             });
@@ -164,16 +160,12 @@ System.register(["./authors_choice_dialog", "./publishers_choice_dialog"], funct
                                     SetDialogActive(dlg, data);
                             }
                             else {
-                                // Если запрос обработан, но произошла ошибка, то устанавливаем текст ошибки в элементе dialog_customer_divmsg
-                                //расположенном здесь, же на форме диалога, чтобы пользователь мог видеть сообщение
-                                var myDiv = document.getElementById("dialog_book_divmsg");
-                                myDiv.innerHTML = "Ошибка полученния списка банковских счетов: " + data["Errors"];
+                                msg("Ошибка полученния списка банковских счетов: " + data["Errors"]);
                             }
                         },
                         // если запрос не удалось обработать
                         error: function (xhr, str) {
-                            var myDiv = document.getElementById("dialog_book_divmsg");
-                            myDiv.innerHTML = "Ошибка полученния списка банковских счетов: " + xhr.responseText;
+                            msg("Ошибка полученния списка банковских счетов: " + xhr.responseText);
                         }
                     });
                 }
@@ -192,8 +184,6 @@ System.register(["./authors_choice_dialog", "./publishers_choice_dialog"], funct
     // Save changes
     function SaveChanges(close) {
         if (close === void 0) { close = false; }
-        var myDiv = document.getElementById("dialog_book_divmsg");
-        myDiv.innerHTML = "";
         // Здесь по атрибуту isNew, определяется что это новая запись или уже существующая
         // в зависимости от этого будет вызываться различный метод контроллера: Add или Update
         var action;
@@ -201,11 +191,11 @@ System.register(["./authors_choice_dialog", "./publishers_choice_dialog"], funct
             action = 'Books/Create';
         else
             action = 'Books/Update?BookId=' + bookId;
-        var msg = $('#form_book').serialize();
+        var formData = $('#form_book').serialize();
         $.ajax({
             type: 'POST',
             url: action,
-            data: msg,
+            data: formData,
             success: function (data) {
                 // Если запрос выполнен без ошибок то присваиваем полученный с сервера html код
                 if (data["isOk"]) {
@@ -228,10 +218,7 @@ System.register(["./authors_choice_dialog", "./publishers_choice_dialog"], funct
                     parentForm.dispatchEvent(event);
                 }
                 else {
-                    //Если запрос обработан, но произошла ошибка, то устанавливаем текст ошибки в элементе dialog_customer_divmsg
-                    //расположенном здесь, же на форме диалога, чтобы пользователь мог видеть сообщение
-                    var myDiv = document.getElementById("dialog_book_divmsg");
-                    myDiv.innerHTML = "Ошибка записи: " + data["Errors"];
+                    msg("Ошибка записи: " + data["Errors"]);
                 }
             },
             statusCode: {
@@ -241,14 +228,9 @@ System.register(["./authors_choice_dialog", "./publishers_choice_dialog"], funct
             },
             // если запрос не удалось обработать
             error: function (xhr, str) {
-                var myDiv = document.getElementById("dialog_book_divmsg");
-                myDiv.innerHTML = "Ошибка записи: " + xhr.responseCode;
+                msg("Ошибка записи: " + xhr.responseCode);
             }
         });
-    }
-    function msg(str) {
-        var myDiv = document.getElementById("dialog_book_divmsg");
-        myDiv.innerHTML = str;
     }
     return {
         setters:[

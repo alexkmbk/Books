@@ -64,8 +64,3 @@ export function OpenAuthorsChoiceDialog(parent: JQuery, PickEventHandler: Functi
     });
 
 }
-
-function msg(str) {
-    var myDiv = document.getElementById("dialog_authors_choiceform_divmsg");
-    myDiv.innerHTML = str;
-}

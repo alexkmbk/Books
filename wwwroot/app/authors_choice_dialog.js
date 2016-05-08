@@ -53,10 +53,6 @@ System.register([], function(exports_1) {
         });
     }
     exports_1("OpenAuthorsChoiceDialog", OpenAuthorsChoiceDialog);
-    function msg(str) {
-        var myDiv = document.getElementById("dialog_authors_choiceform_divmsg");
-        myDiv.innerHTML = str;
-    }
     return {
         setters:[],
         execute: function() {
