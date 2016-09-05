@@ -1,4 +1,4 @@
 #Учебный проект на платформе ASP .NET MVC 6   
-База данных: PostgreeSQL  
+Database: PostgreeSQL  
 ORM: NHibernate  
 frontend: typescript, jquery,jquery-ui  
